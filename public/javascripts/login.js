@@ -1,5 +1,4 @@
-var regUsername = new RegExp("^[a-z0-9_]{1,10}$");
-var regPassword = new RegExp("^[a-z0-9]{1,20}$");
+
 var boolResult = true;
 var usernameInput = $("#usernameInput");
 var usernameAlert = $("#usernameAlert");

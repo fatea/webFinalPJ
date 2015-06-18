@@ -1,6 +1,7 @@
-var regUsername = new RegExp("^[a-zA-Z0-9_]{2,14}$");
+/*var regUsername = new RegExp("^[a-zA-Z0-9_]{2,14}$");
 var regPassword = new RegExp("^(?=.*[a-zA-Z_])[a-zA-Z0-9_]{6,40}$");
-var regName = new RegExp("^[\u4e00-\u9fa5_a-zA-Z0-9]{1,20}$");
+var regName = new RegExp("^[\u4e00-\u9fa5_a-zA-Z0-9]{1,20}$");*/
+
 var boolResult = true;
 var usernameInput = $("#usernameInput");
 var usernameAlert = $("#usernameAlert");
@@ -15,7 +16,7 @@ var repeatpwInput = $("#repeatpwInput");
 var repeatpwAlert = $("#repeatpwAlert");
 
 usernameInput.blur(function() {
-    if (regUsername.test(usernameInput.val()) == false) {
+    if (Reg.checkUsername(usernameInput.val()) == false) {
         usernameAlert.show();
         boolResult = false;
     }
@@ -28,7 +29,7 @@ usernameInput.focus(function() {
 
 
 passwordInput.blur(function() {
-    if ((regPassword.test(passwordInput.val()) == false)||((repeatpwInput.val() == passwordInput.val()) == false)) {
+    if ((Reg.checkPassword(passwordInput.val()) == false)||((repeatpwInput.val() == passwordInput.val()) == false)) {
         passwordAlert.show();
         boolResult = false;
     }
@@ -42,7 +43,7 @@ passwordInput.focus(function() {
 
 
 nameInput.blur(function() {
-    if (regName.test(nameInput.val()) == false) {
+    if (Reg.checkName(nameInput.val()) == false) {
         nameAlert.show();
         boolResult = false;
     }
