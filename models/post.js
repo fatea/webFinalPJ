@@ -1,38 +1,100 @@
 var db = require('../models/db');
 var dateFormat = require('../routes/lib/dateFormat');
 var async = require('async');
+var Trim = require('../routes/lib/trim');
+
 function Post(postData){
     this.username = postData.username;
     this.title = postData.title;
     this.content = postData.content;
-    this.tag = postData.tag;
+    this.tag = Trim.normal(postData.tag).split(' ');
     this.category = postData.category;
 }
 
 Post.prototype.save = function(){
     var date = new Date();
+
     var post = {
         username: this.username,
         title : this.title,
         content : this.content,
-        tag : this.tag,
-        category : this.category,
         date : dateFormat.getDate(date),
         time :dateFormat.getTime(date),
         realdate : date,
         realtime : date
     };
-    var insertSQL = 'insert into POST_LIST SET ?';
 
-    db.query(insertSQL, post, function(err, res){
-        if (err){
-            console.log(err);
-        }
-        else{
-            console.log("INSERT Return ==> ");
-            console.log(res);
-        }
-    });
+    var category = {
+        username : this.username,
+        category : this.category
+    };
+
+    var tag = {
+        username : this.username,
+        tag : this.tag
+    };
+
+    async.waterfall([
+        function(callback){
+            var insertSQL = 'insert into POST_LIST SET ?';
+            db.query(insertSQL, post, function(err, result){
+                if (err){
+                    console.log(err);
+                }
+                else{
+
+
+                    callback(null, result.insertId);
+
+                }
+            });
+        },
+        function(postid){
+            async.parallel(
+                {
+
+                    category : function(subcb){
+                        category.postid = postid;
+                        var insertSQL = 'insert into CATEGORY_LIST SET ?';
+                        db.query(insertSQL, category, function(err, result){
+                            if (err){
+                                console.log(err);
+                            }
+                            else{
+
+
+                                subcb(null, result);
+                            }
+                        });
+                    },
+
+                    tag : function(subcb){
+
+                        var tagArr = [];
+                        for(var i = 0; i < tag.tag.length; i++){
+                        tagArr[i] = [tag.username, postid, tag.tag[i]];
+                        }
+
+
+
+
+
+                        var insertSQL = 'insert into TAG_LIST (username, postid, tag) VALUES ?';
+                        db.query(insertSQL, [tagArr], function(err, result){
+                            if (err){
+                                console.log(err);
+                            }
+                            else{
+
+                                subcb(null, result);
+                            }
+                        });
+                    }
+                });
+
+                }
+    ]);
+
 };
 
 Post.getAllPost = function(username, callback) {
@@ -175,7 +237,7 @@ var sqlSet = [username, date, title];
 
 
 Post.getAllCategory = function(username, callback){
-    var selectSQL = 'SELECT category, COUNT(category) as total FROM POST_LIST WHERE username = ? GROUP BY category';
+    var selectSQL = 'SELECT category, COUNT(category) as total FROM CATEGORY_LIST WHERE username = ? GROUP BY category';
 
     db.query(selectSQL, username, function (err, results) {
             if (err) {
@@ -185,6 +247,7 @@ Post.getAllCategory = function(username, callback){
             if(results.length == 0){
                 callback(null, false);
             }else{
+
                 callback(null, results);}
 
 
@@ -193,7 +256,7 @@ Post.getAllCategory = function(username, callback){
 };
 
 Post.getAllTag = function(username, callback){
-    var selectSQL = 'SELECT DISTINCT tag FROM POST_LIST WHERE username = ?';
+    var selectSQL = 'SELECT DISTINCT tag FROM TAG_LIST WHERE username = ?';
     db.query(selectSQL, username, function (err, results) {
             if (err) {
                 console.log(err+'err happens in Post.getAllTag');
@@ -202,6 +265,7 @@ Post.getAllTag = function(username, callback){
             if(results.length == 0){
                 callback(null, false);
             }else{
+
                 callback(null, results);}
 
 

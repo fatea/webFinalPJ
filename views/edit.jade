@@ -22,7 +22,7 @@ html(lang='zh-CN')
                                         option(value='techNews') 科技新闻
                                         option(value='funTime') 休闲时刻
                                         option(value='yummy') 吃货必看
-                                    a.tag.newCategory(href='') 创建分类
+                                    a#newCategory.tag.newCategory(href='') 创建分类
                                 li
                                     span 标签:
                                     textarea#tagArea(name='tagArea', placeholder='填写标签, 让更多人看到你的博文')
@@ -31,5 +31,7 @@ html(lang='zh-CN')
             p Copyright © 1996 - 2014 SINA Corporation, All Rights Reserved
             p 新浪公司 版权所有
 
-        script(type='text/javascript', src='/javascripts/jquery-1.11.3.min.js')
+        script(type='text/javascript', src='/javascripts/lib/jquery-1.11.3.min.js')
+        script(type='text/javascript', src='/javascripts/lib/trim.js')
+        script(type='text/javascript', src='/javascripts/lib/check.js')
         script(type='text/javascript', src='/javascripts/edit.js')

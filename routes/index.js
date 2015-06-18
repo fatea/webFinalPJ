@@ -14,11 +14,14 @@ router.get('/', function(req, res, next) {
                 var userData = results.userData[0];
                 var postData = results.postData;
                 var categoryData = results.categoryData;
+                var tagData = results.tagData;
+
+                console.log(tagData);
                 var fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
 
 
                 if(results.postData == false){
-                        console.log(postData);
+
                     if(results.userData != false){
                         res.render('index', {
                             hasPost : (typeof(postData)!='undefined'&&postData.length > 0),
@@ -43,7 +46,7 @@ router.get('/', function(req, res, next) {
                     var i;
 
                     for(i= 0; i < postData.length;i++){
-                        tagsArr[i] = postData[i].tag;
+
                         categoryArr[i] = postData[i].category;
                         titleArr[i] = postData[i].title;
                         contentArr[i] = markdown.parse(postData[i].content) ;
@@ -51,6 +54,8 @@ router.get('/', function(req, res, next) {
                         hrefArr[i] = '/'+postData[i].username+'/'+postData[i].date+'/'+postData[i].title
                     }
 
+
+                    //tagsArr[i] = tagData[i].tag;
 
 
 
