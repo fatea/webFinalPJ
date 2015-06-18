@@ -75,11 +75,6 @@ Post.prototype.save = function(){
                         tagArr[i] = [tag.username, postid, tag.tag[i]];
                         }
 
-
-                        
-
-
-
                         var insertSQL = 'insert into TAG_LIST (username, postid, tag) VALUES ?';
                         db.query(insertSQL, [tagArr], function(err, result){
                             if (err){
