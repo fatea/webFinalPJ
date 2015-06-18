@@ -1,0 +1,106 @@
+doctype html
+html(lang='zh-CN')
+    head
+        meta(charset='UTF-8')
+        title 博文显示
+        link(href='/stylesheets/blog.css', rel='stylesheet', type='text/css')
+    body
+        #wrapper
+            #topwrap
+                p.title.topwrap #{mainTitle}
+                p.subtitle.topwrap #{subTitle}
+                ul.banner.topwrap
+                    li
+                        a(href='/'+ username + '/index') 首页
+                    li
+                        a(href='/'+ username + '/blog_list') 博文目录
+                    li
+                        a(href='') 图片
+                    li
+                        a(href='/'+ username + '/about') 关于我
+            #midwrap
+                .left.midwrap
+                    #info.container
+                        .header
+                            p.title 个人资料
+                        .img
+                            img#avatar(src= imgsrc, alt='头像')
+                            p.imgdesc #{name}
+                        hr#imgHr
+                        p.desc 大家好，我是#{name}！欢迎光临我的博客！
+                #postList.right.midwrap.container
+                    .header
+                        p.title 正文
+                    ul.postList
+                        li.post
+                            .postTitle
+                                a.postTitleMain(href='') #{title}
+                                span.postTime  #{'('+time+')'}
+                            ul.topTag
+                                li.tagListLi
+                                    span.tagTitle 标签:
+                                    ul.tagList
+                                        each tag in tags.split(' ')
+                                            li
+                                                a.tag(href='') #{tag}
+                                li.categoryListLi
+                                    span.tagTitle 分类:
+                                    ul.categoryList
+                                        li
+                                            a.tag(href='') #{category}
+                            .postContent !{content}
+                            ul.bottomTag
+                                li
+                                    ul.bottomTagList
+                                        li
+                                            a.bottomTag.tag(href='') 阅读
+                                            span.bottomCount #{'('+pageview+')'}
+                                        li
+                                            a.bottomTag.tag(href='') 赞
+                                            span.bottomCount (0)
+                                        li
+                                            a.bottomTag.tag(href='#commentArea') 评论
+                                            span.bottomCount (2)
+
+                                        -if (guest == false)
+                                            li
+                                                a.bottomTag.tag(href='') 编辑
+                                            li
+                                                a.bottomTag.tag(href='') 删除
+                        hr
+                    #commentList
+                        .commentHeader
+                            p 评论
+                        ul.commentList
+                            -if(comments.length == 0)
+                                li.commentLi
+                                    p.commentContent 暂无评论
+                            -else
+                                -for(var i = 0; i < comments.length; i++){
+                                    li.commentLi
+                                        a.commenterName(href='/'+ comments[i].username + '/index') #{comments[i].username}
+                                        p.commentContent #{comments[i].content}
+                                        ul.commentTag
+                                            li.commentTime
+                                                span.commentTime #{comments[i].time}
+                                            li.commentDelete
+                                                a.tag(href='') 删除
+                                    hr
+                                -}
+                    -if( loginStatus == true)
+                        #newComment
+                            .commentHeader
+                                p 发评论
+                            textarea#commentArea(name='commentArea')
+                            input#commentSubmit.submit.buttons(type='submit', value='发评论')
+
+                    ul.otherPostList
+                        li
+                            p <  前一篇
+                            p 后一篇  >
+                        li
+                            a.tag.otherPost(href='') 木卫二的生命迹象  亟待人类发射探测器
+                            a.tag.otherPost(href='') 番茄酱鳕鱼做法
+        footer
+            p Copyright © 1996 - 2014 SINA Corporation, All Rights Reserved
+            p 新浪公司 版权所有

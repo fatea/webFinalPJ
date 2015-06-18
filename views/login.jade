@@ -1,0 +1,40 @@
+doctype html(lang='zh-CN')
+head
+    meta(charset='UTF-8')
+       
+    title 登录页面
+      
+    link(href='/stylesheets/login.css', rel='stylesheet', type='text/css')
+  body
+    #wrapper
+      img(src='/images/logo_weibo.png', alt='微博logo')
+
+      form.loginBox( method='POST', onsubmit='return validateForm();', action='/login' )
+        if error && error.length
+          span  #{error}
+        else
+          span 请输入您的帐号及密码
+
+        a(href='/register', class='register') 注册
+        .loginBoxMain
+          p#unPara.loginBoxMain
+            span 帐号:
+             
+            input#usernameInput.loginBoxMain(type='text', name='username', placeholder='帐号', autofocus='')
+            
+            span#usernameAlert.alert 账户不符合规范
+                     
+          p#pwPara.loginBoxMain
+            span 密码:
+             
+            input#passwordInput.loginBoxMain(type='password', name='password', placeholder='请输入密码')
+            span#passwordAlert.alert 只能为不超过20位的数字组合
+              
+        hr
+               
+        .loginBoxButtons
+          input.submit.buttons(type='submit', value='登录')
+
+          input.cancel.buttons(type='reset', value='取消')
+    script(type='text/javascript', src='/javascripts/jquery-1.11.3.min.js')
+    script(type='text/javascript', src='/javascripts/login.js')

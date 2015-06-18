@@ -1,0 +1,96 @@
+doctype html
+html(lang='zh-CN')
+    head
+        meta(charset='UTF-8')
+        title 主页面
+        link(href='/stylesheets/index.css', rel='stylesheet', type='text/css')
+    body
+        #wrapper
+            #topwrap
+                p.title.topwrap #{mainTitle}
+                p.subtitle.topwrap #{subTitle}
+                ul.banner.topwrap
+                    li
+                        a(href='index') 首页
+                    li
+                        a(href='blog_list') 博文目录
+                    li
+                        a(href='') 图片
+                    li
+                        a(href='about') 关于我
+            #midwrap
+                .left.midwrap
+                    #info.container
+                        .header
+                            p.title 个人资料
+                        .img
+                            img#avatar(src=imgsrc, alt='头像')
+                            p.imgdesc #{name}
+                        hr#imgHr
+                        p.desc 大家好，我是#{name}！欢迎光临我的博客！
+                    #category.container
+                        .header
+                            p.title 分类
+                        ul.category
+                            -if(!hasPost)
+                                li
+                                    a.categoryTag.tag(href='postlist.html') 全部博文
+                                    span.categoryCount (0)
+                            -else
+                                li
+                                    a.categoryTag.tag(href='postlist.html') 全部博文
+                                    span.categoryCount #{'('+ categoryLength +')'}
+
+                                -for(var j = 0; j < category.length; j++){
+                                    li
+                                        a.categoryTag.tag(href='') #{category[j].category}
+                                        span.categoryCount #{'('+ category[j].total +')'}
+                                -}
+
+                #postList.right.midwrap.container
+                    .header
+                        p.title 博文
+                    ul.postList
+                        -if(!hasPost)
+                            p 暂无博文
+                        -else
+                            -for(var i = 0;i< postDataLength; i++){
+                                li.post
+                                    .postTitle
+                                        a.postTitleMain(href= hrefArr[i]) #{titleArr[i]}
+                                        span.postTime  #{'('+timeArr[i]+ ')'}
+                                    ul.topTag
+                                        li.tagListLi
+                                            span.tagTitle 标签:
+                                            ul.tagList
+
+                                                each tag in tagsArrArr[i].split(' ')
+                                                    li
+                                                        a.tag(href='') #{tag}
+
+                                        li.categoryListLi
+                                            span.tagTitle 分类:
+                                            ul.categoryList
+                                                li
+                                                    a.tag(href='') #{categoryArr[i]}
+                                    .postContent !{contentArr[i]}
+                                    ul.bottomTag
+                                        li
+                                            ul.bottomTagList
+                                                li
+                                                    a.bottomTag.tag(href='') 阅读
+                                                    span.bottomCount
+                                                li
+                                                    a.bottomTag.tag(href='') 评论
+                                                    span.bottomCount
+                                        li
+                                            a.fullPost.tag(href=hrefArr[i]) 查看全文>>
+                                hr
+
+
+                            -}
+
+        footer
+            p Copyright © 1996 - 2014 SINA Corporation, All Rights Reserved
+            p 新浪公司 版权所有
+                                          

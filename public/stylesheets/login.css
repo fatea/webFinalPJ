@@ -1,0 +1,122 @@
+@charset "utf-8";
+
+* {
+	padding: 0;
+	margin: 0;
+}
+
+
+input, textarea {
+	font-family: arial, 'Hiragino Sans GB', 'Microsoft Yahei', '微软雅黑', '宋体', \5b8b\4f53, Tahoma, Arial, Helvetica, STHeiti;
+}
+
+body {
+    height: 800px;
+    width: 100%;
+	background-image: linear-gradient(to bottom right,#F0F1F1,#F0F1F1);
+}
+
+#wrapper {
+height: 230px;
+	width: 600px;
+	position: absolute;  
+    left: 50%;  
+    top: 50%;  
+    margin-top: -190px;
+    margin-left: -330px;
+}
+
+form.loginBox {
+		height: 100%;
+	width: 100%;
+
+
+	background: rgba(255,255,255,0.75);
+  	background-clip: padding-box;
+  	border: 2px solid rgba(0,0,0,0.1); 
+  	border-radius: 6px;
+  	padding-top: 25px;
+  	padding-left: 25px;
+  	padding-right: 25px;
+
+}
+
+
+div.loginBoxMain {
+	margin-top: 30px;
+	margin-left: 112px;
+}
+p.loginBoxMain {
+	margin-top: 13px;
+	margin-bottom: 13px;
+
+}
+input.loginBoxMain {
+	width: 260px;
+	height: 30px;
+	font-size: 14px;
+	background-color: #FAFAFA;
+	margin-left: 14px;
+}
+
+hr {
+	border: 1px solid rgba(0,0,0,0.1);
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+a:link {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+div.loginBoxButtons {
+	float: right;
+	margin-right: 40px;
+}
+
+.buttons {
+	background-color: grey;
+	width: 80px;
+	height: 35px;
+  	background-clip: padding-box;
+  	border: 1px solid rgba(0,0,0,0.1); 
+  	border-radius: 2px;
+  	font-size: 16px;
+  	margin-right: 20px;
+  	cursor: pointer;
+
+}
+.submit {
+	background-color: #EF3043;
+	color: white;
+
+}
+.cancel {
+		background-image: linear-gradient(to bottom,#F0F1F1,#F0F1F1);
+
+}
+
+.submit:hover {
+	background: #37A2F9;
+}
+.cancel:hover {
+	color: white;
+	background: #2B303B;
+}
+
+span.alert {
+	display: none;
+	font-size: 10px;
+	color: red;
+}
+
+a.register {
+    float: right;
+    color: #3B70B7;
+}
+
+

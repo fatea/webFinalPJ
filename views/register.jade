@@ -1,0 +1,39 @@
+doctype html(lang='zh-CN')
+head
+    meta(charset='UTF-8')
+    title 注册页面
+    link(href='/stylesheets/register.css', rel='stylesheet', type='text/css')
+body
+    #wrapper
+        img(src='/images/logo_weibo.png', alt='微博logo')
+        form.registerBox( method='POST', onsubmit='return validateForm();', action='/register' )
+            if error && error.length
+                span  #{error}
+            else
+                span 请输入注册信息
+
+            a(href='/login', class='login') 登录
+            .registerBoxMain
+                p#unPara.registerBoxMain
+                    span 帐号:
+                    input#usernameInput.registerBoxMain(type='text', name='username', placeholder='帐号', autofocus='')
+                    span#usernameAlert.alert 账户不符合格式
+                p#namePara.registerBoxMain
+                    span 昵称:
+                    input#nameInput.registerBoxMain(type='text', name='name', placeholder='昵称')
+                    span#nameAlert.alert 昵称字数不符合规范
+                p#pwPara.registerBoxMain
+                    span 密码:
+                    input#passwordInput.registerBoxMain(type='password', name='password', placeholder='请输入密码')
+                    span#passwordAlert.alert 密码不符合格式或两次输入不同
+                p#repeatpwPara.registerBoxMain
+                    span 重复输入密码:
+                    input#repeatpwInput.registerBoxMain(type='password', name='repeatPassword', placeholder='请再输入一次密码')
+                    span#repeatpwAlert.alert 两次密码输入不相同
+
+            hr
+            .registerBoxButtons
+                input.submit.buttons(type='submit', value='注册')
+                input.cancel.buttons(type='reset', value='取消')
+    script(type='text/javascript', src='/javascripts/jquery-1.11.3.min.js')
+    script(type='text/javascript', src='/javascripts/register.js')
