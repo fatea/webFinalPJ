@@ -18,16 +18,13 @@ router.get('/', function(req, res, next) {
 
 
                 if(results.postData == false){
-
+                        console.log(postData);
                     if(results.userData != false){
-
                         res.render('index', {
                             hasPost : (typeof(postData)!='undefined'&&postData.length > 0),
                             mainTitle : req.params.username+'的博客',
                             subTitle : fullUrl.toString(),
-                            /*category : postData[0].category,
-                            postTitleMain : postData[0].title,
-                            postContent: postData[0].content,*/
+
 
                             imgsrc : '/images/avatars/'+'wjt.gif'
                         });}

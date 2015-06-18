@@ -19,10 +19,11 @@ router.get('/', function(req, res, next) {
             var fullUrl =  req.protocol + '://' + req.get('host') + '/'+req.params.username+'/index';
 
 
-            if(results.postData == false){
+            if(post == false){
                     next();
             }
             else{
+
 
 
                 if(comments == false){
@@ -32,6 +33,7 @@ router.get('/', function(req, res, next) {
 
                 res.render('blog', {
                     //postData : postData,
+                    hasPost : (typeof(post)!='undefined'&&post.length > 0),
                     username: user.username,
                     name : user.name,
                     mainTitle : user.name +'的博客',
