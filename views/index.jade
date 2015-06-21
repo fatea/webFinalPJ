@@ -63,10 +63,10 @@ html(lang='zh-CN')
                                         li.tagListLi
                                             span.tagTitle 标签:
                                             ul.tagList
-
-                                                each tag in tagsArrArr[i].split(' ')
-                                                    li
-                                                        a.tag(href='') #{tag}
+                                                -if(!(tagsArr[i] === null))
+                                                    each tag in tagsArr[i]
+                                                        li
+                                                            a.tag(href='') #{tag}
 
                                         li.categoryListLi
                                             span.tagTitle 分类:

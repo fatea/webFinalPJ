@@ -13,13 +13,17 @@ router.get('/', function(req, res, next) {
 
             var user = results.userData[0];
 
+            var postNotFound = (results.postData == false);
             var post = results.postData.post;
             var comments = results.postData.comments;
+            var tag = results.postData.tag;
+
+
 
             var fullUrl =  req.protocol + '://' + req.get('host') + '/'+req.params.username+'/index';
 
 
-            if(post == false){
+            if(postNotFound){
                     next();
             }
             else{
@@ -40,7 +44,7 @@ router.get('/', function(req, res, next) {
                     subTitle : fullUrl.toString(),
                     comments : comments,
                     category : post.category,
-                    tags : post.tag,
+                    tags : tag,
                     loginStatus : (req.session.username != null),
                     guest : (req.params.username != req.session.username),
                     title : post.title,

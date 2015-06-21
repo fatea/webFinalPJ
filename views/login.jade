@@ -9,7 +9,7 @@ head
     #wrapper
       img(src='/images/logo_weibo.png', alt='微博logo')
 
-      form.loginBox( method='POST', onsubmit='return validateForm();', action='/login' )
+      form#loginForm.loginBox( method='POST', onsubmit='return validateForm();', action='/login' )
         if error && error.length
           span  #{error}
         else
@@ -36,6 +36,5 @@ head
           input.submit.buttons(type='submit', value='登录')
 
           input.cancel.buttons(type='reset', value='取消')
-    script(type='text/javascript', src='/javascripts/lib/jquery-1.11.3.min.js')
-    script(type='text/javascript', src='/javascripts/lib/check.js')
-    script(type='text/javascript', src='/javascripts/login.js')
+
+    script(type = 'text/javascript', src='javascripts/lib/require.js' data-main='javascripts/login')

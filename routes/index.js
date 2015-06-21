@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router({ mergeParams: true});
-var Post = require('../models/post');
 var clone = require('clone');
 var async = require('async');
 var getContent = require('./lib/getContent');
@@ -16,7 +15,7 @@ router.get('/', function(req, res, next) {
                 var categoryData = results.categoryData;
                 var tagData = results.tagData;
 
-                console.log(tagData);
+                console.log(postData);
                 var fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
 
 
@@ -48,6 +47,7 @@ router.get('/', function(req, res, next) {
                     for(i= 0; i < postData.length;i++){
 
                         categoryArr[i] = postData[i].category;
+                        tagsArr[i] = postData[i].tag.split(' ');
                         titleArr[i] = postData[i].title;
                         contentArr[i] = markdown.parse(postData[i].content) ;
                         timeArr[i] = postData[i].time;
@@ -55,8 +55,8 @@ router.get('/', function(req, res, next) {
                     }
 
 
-                    //tagsArr[i] = tagData[i].tag;
 
+                    console.log(tagsArr);
 
 
                     res.render('index', {
@@ -69,7 +69,7 @@ router.get('/', function(req, res, next) {
                         subTitle : fullUrl.toString(),
 
                         category : categoryData,
-                        tagsArrArr : tagsArr,
+                        tagsArr : tagsArr,
                         categoryArr : categoryArr,
                          titleArr : titleArr,
                         contentArr: contentArr,

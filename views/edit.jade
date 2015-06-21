@@ -9,11 +9,11 @@ html(lang='zh-CN')
             #postList.right.midwrap.container
                 .header
                     p.title 发博文
-                    form.editBox(method='POST', onsubmit='return validateForm();', action= '/'+ username + '/edit' )
+                    form.editBox(method='POST', onsubmit='return validateForm();', action= '/'+ username + '/edit/new' )
                         #newEdit
                             p#editTitle 标题:
-                            textarea#titleArea(name='titleArea')
-                            textarea#editArea(name='editArea')
+                            textarea#titleArea(name='titleArea') #{title}
+                            textarea#editArea(name='editArea')  #{content}
                             ul.editTagList
                                 li
                                     span 分类:

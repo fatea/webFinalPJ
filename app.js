@@ -45,7 +45,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use('/:username/index', index);
-app.use('/:username/edit/:action?', edit);
+app.use('/:username/edit/:action', edit);
+app.use('/:username/edit/:date/:title', edit);
 app.use('/:username/profile', profile);
 app.use('/:username/:date/:title', blog);
 app.use('/login', login);
