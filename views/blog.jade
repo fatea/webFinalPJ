@@ -57,11 +57,11 @@ html(lang='zh-CN')
                                             a.bottomTag.tag(href='') 阅读
                                             span.bottomCount #{'('+pageview+')'}
                                         li
-                                            a.bottomTag.tag(href='') 赞
-                                            span.bottomCount (0)
+                                            a#likeTag.bottomTag.tag(href='') 赞
+                                            span#likeCount.bottomCount #{'('+favor+')'}
                                         li
                                             a.bottomTag.tag(href='#commentArea') 评论
-                                            span.bottomCount (2)
+                                            span.bottomCount #{'('+comments.length+')'}
 
                                         -if (guest == false)
                                             li
@@ -105,3 +105,4 @@ html(lang='zh-CN')
         footer
             p Copyright © 1996 - 2014 SINA Corporation, All Rights Reserved
             p 新浪公司 版权所有
+        script(type = 'text/javascript', src='/javascripts/lib/require.js' data-main='/javascripts/blog')

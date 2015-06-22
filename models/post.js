@@ -208,7 +208,6 @@ Post.getAllPost = function(username, callback) {
 
 Post.getOnePost = function(username, date , title, guest, callback){
 var sqlSet = [username, date, title];
-            console.log(title);
     async.series(
         {
             update : function(cb){
@@ -223,6 +222,7 @@ var sqlSet = [username, date, title];
                         if (results.length == 0) {
                             cb(null, false);
                         } else {
+
                             cb(null, results);
                         }
 

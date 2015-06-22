@@ -49,6 +49,7 @@ app.use('/:username/edit/:action', edit);
 app.use('/:username/edit/:date/:title', edit);
 app.use('/:username/profile', profile);
 app.use('/:username/:date/:title', blog);
+//app.use('/:username/:date/:title/like', blog);
 app.use('/login', login);
 app.use('/register', register);
 app.use('/users', users);
