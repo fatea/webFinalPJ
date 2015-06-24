@@ -72,15 +72,16 @@ html(lang='zh-CN')
                     #commentList
                         .commentHeader
                             p 评论
-                        ul.commentList
+                        ul#commentUL.commentList
                             -if(comments.length == 0)
-                                li.commentLi
+                                li#tempCommentLi.commentLi
                                     p.commentContent 暂无评论
                             -else
                                 -for(var i = 0; i < comments.length; i++){
                                     li.commentLi
                                         a.commenterName(href='/'+ comments[i].username + '/index') #{comments[i].username}
-                                        p.commentContent #{comments[i].content}
+                                        div.commentContent
+                                            pre #{comments[i].content}
                                         ul.commentTag
                                             li.commentTime
                                                 span.commentTime #{comments[i].time}

@@ -318,8 +318,10 @@ li.commentLi {
 	padding-right: 40px;
 }
 
-p.commentContent {
-		margin-top: 5px;
+.commentContent {
+    word-wrap: break-word;
+    word-break: normal;
+    margin-top: 5px;
 	margin-bottom: 5px;
 	line-height: 160%;
 	font-size: 13px;

@@ -62,14 +62,14 @@ router.get('/', function(req, res, next) {
 
 
 router.post('/like', function(req, res, next){
-
+        console.log(req.params);
 
     if(typeof(req.session.username) != 'undefined'){
-        var username =req.session.username;
+        var supportername =req.session.username;
         var date = req.params.date;
         var title = req.params.title;
         //console.log(req.params);
-        var sqlSet = [username, date, title];
+        var sqlSet = [req.params.username, date, title];
         //console.log(sqlSet);
         async.waterfall([
             function(callback){
@@ -84,63 +84,116 @@ router.post('/like', function(req, res, next){
                     }else{
                         //console.log('this is the original post: '+results[0]);
                         callback(null, results[0].postid);}
-
                 });
             },
+                function(postid, callback){
+                  if(postid != false){
+                      var selectFavorSQL = 'SELECT * FROM FAVOR_LIST WHERE postid = ? AND username = ?';
+                      db.query(selectFavorSQL, [postid, supportername],function(err, results){
+                         if(err){
+                             console.log(err+'err happens in router: blog.js.selectPost');
+                         }
 
-            function(postid, callback){
+                          if(results.length == 0){
+                              callback(null, false, postid);
+                          }else{
+                              callback(null, true, postid);
+                          }
+                      });
+                  }else{
+                      callback(null, false, false);
+                  }
+                },
+
+            function(hasFavored, postid, callback){
                     if(postid != false){
+                        var updatePostSQL ='';
+                        if(hasFavored){
+                            updatePostSQL = 'UPDATE POST_LIST SET favor = favor-1 WHERE postid = ?';
+                        }else{
+                            updatePostSQL = 'UPDATE POST_LIST SET favor = favor+1 WHERE postid = ?';}
+                            db.query(
+                                updatePostSQL, [postid], function(err, results){
+                                    if (err) {
 
-                        var updatePostSQL = 'UPDATE POST_LIST SET favor = favor+1 WHERE postid = ?';
-                        db.query(
-                            updatePostSQL, [postid], function(err, results){
-                                if (err) {
+                                        console.log(err + 'err happens in router:blog.js.updatePost');
+                                    }
 
-                                    console.log(err + 'err happens in router:blog.js.updatePost');
+                                    if (results.affectedRows == 0) {
+                                        callback(null, false, false);
+                                    } else {
+                                        callback(null, hasFavored, postid);
+                                    }
                                 }
+                            );
 
-                                if (results.affectedRows == 0) {
-                                    callback(null, false);
-                                } else {
-                                    callback(null, postid);
-                                }
-                            }
-                        );
+
+
                     }else {
-                        callback(null, false);
+                        callback(null, false, false);
                     }
 
             },
-            function(postid, callback){
+            function(hasFavored, postid, callback){
+                var deleteFavorSQL = 'DELETE FROM FAVOR_LIST WHERE username = ? AND postid = ?';
+                var insertFavorSQL = 'INSERT INTO FAVOR_LIST SET ?';
                 if(postid != false){
-                    //var updatePostSQL = 'UPDATE LIKE_LIST SET like = like+1,username = wjt WHERE postid = '+postid+'';
-                    var insertFavorSQL = 'INSERT INTO FAVOR_LIST SET ?';
-                    db.query(
-                        insertFavorSQL, {username:username, postid:postid},function(err, results){
-                            if (err) {
-                                console.log(err + 'err happens in router:blog.js.updateFavor');
+                    if(hasFavored){
+                        db.query(
+                            deleteFavorSQL, [supportername, postid], function(err, results){
+                                if (err) {
+                                    console.log(err + 'err happens in router:blog.js.deleteFavor');
+                                }
+                                if (typeof(results.insertId) == 'undefined') {
+                                    callback(null, false);
+                                } else {
+                                    callback(null, -1);
+                                }
                             }
+                        );
+                    } else{
+                        db.query(
+                            insertFavorSQL, {username:supportername, postid:postid},function(err, results){
+                                if (err) {
+                                    console.log(err + 'err happens in router:blog.js.insertFavor');
+                                }
 
-                            if (typeof(results.insertId) == 'undefined') {
-                                callback(null, false);
-                            } else {
-                                callback(null, true);
+                                if (typeof(results.insertId) == 'undefined') {
+                                    callback(null, false);
+                                } else {
+                                    callback(null, 1);
+                                }
                             }
-                        }
-                    );
+                        );
+                    }
+
                 }else {
                     callback(null, false);
                 }
             }
         ],
         function(err, result){
-            res.send(result);
+            res.write(result+'');
+            res.end();
         }
         );
 
     }else{
-        res.send(false);
+        res.write(false+'');
+        res.end();
     }
 });
+
+
+
+router.post('/comment', function(req, res, next){
+    res.write('true');
+    res.end();
+});
+
+
+
+
+
 
 module.exports = router;
