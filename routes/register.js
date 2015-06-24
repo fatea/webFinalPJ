@@ -16,9 +16,13 @@ router.post('/', function(req, res) {
         name : req.body.name
     };
     var user = new User(userData);
-    user.register(function(){
+    user.register(function(status){
+        if(status == false){
         req.flash('error', '已存在相同帐号, 请重新输入');
         res.redirect('/register');
+        }else{
+            res.redirect('/'+userData.username+'/index');
+        }
     });
 });
 

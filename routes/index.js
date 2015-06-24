@@ -24,9 +24,9 @@ router.get('/', function(req, res, next) {
                     if(results.userData != false){
                         res.render('index', {
                             hasPost : (typeof(postData)!='undefined'&&postData.length > 0),
-                            mainTitle : req.params.username+'的博客',
+                            mainTitle : userData.name+'的博客',
                             subTitle : fullUrl.toString(),
-
+                            name : userData.name,
 
                             imgsrc : '/images/avatars/'+'wjt.gif'
                         });}

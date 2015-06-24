@@ -349,8 +349,48 @@ var sqlSet = [username, date, title];
 
 
 Post.getAllCategory = function(username, callback){
-    var selectSQL = 'SELECT category, COUNT(category) as total FROM CATEGORY_LIST WHERE username = ? GROUP BY category';
 
+    async.parallel({
+        hasPost: function(subcb){
+            var selectHasPostSQL = 'SELECT category, COUNT(category) as total FROM CATEGORY_LIST WHERE username = ? AND postid IS NOT NULL GROUP BY category';
+            db.query(selectHasPostSQL, [username],
+            function(err, results){
+                if (err) {
+                    console.log(err+'err happens in Post.getAllCategory.HasPost');
+                }
+
+                if(results.length == 0){
+                    subcb(null, false);
+                }else{
+                    subcb(null, results);}
+            });
+        },
+        hasNoPost: function(subcb){
+            var selectHasNoPostSQL = 'SELECT category, COUNT(category) as total FROM CATEGORY_LIST WHERE username = ? AND postid IS NULL GROUP BY category';
+            db.query(selectHasNoPostSQL, [username],
+            function(err, results){
+                if (err) {
+                    console.log(err+'err happens in Post.getAllCategory.hasNoPost');
+                }
+
+                if(results.length == 0){
+                    subcb(null, false);
+                }else{
+                    subcb(null, results);}
+            });
+        }
+    }, function(err, results){
+        for(var i = 0; i < results.hasNoPost.length; i++){
+            results.hasNoPost[i].total = 0;
+        }
+        var finalResult = results.hasPost.concat(results.hasNoPost);
+        console.log(finalResult);
+        callback(null, finalResult);
+
+    });
+
+
+/*
     db.query(selectSQL, username, function (err, results) {
             if (err) {
                 console.log(err+'err happens in Post.getAllCategory');
@@ -359,12 +399,14 @@ Post.getAllCategory = function(username, callback){
             if(results.length == 0){
                 callback(null, false);
             }else{
-
+                    console.log(results);
                 callback(null, results);}
 
 
         }
     );
+    */
+
 };
 
 Post.getAllTag = function(username, callback){
