@@ -14,6 +14,8 @@ User.prototype.register = function(callback) {
     };
 var insertSQL = "insert into USER_LIST values('"+user.username + "', '"+user.password+ "', '"+user.name+ "')";
 
+
+    
     db.query(insertSQL, function(err, res){
         if (err){
             console.log(err);

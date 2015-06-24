@@ -65,9 +65,9 @@ html(lang='zh-CN')
 
                                         -if (guest == false)
                                             li
-                                                a.bottomTag.tag(href='') 编辑
+                                                a#editPost.bottomTag.tag(href='/'+username+'/edit/'+date+'/'+title) 编辑
                                             li
-                                                a.bottomTag.tag(href='') 删除
+                                                a#deletePost.bottomTag.tag(href='') 删除
                         hr
                     #commentList
                         .commentHeader
@@ -79,17 +79,23 @@ html(lang='zh-CN')
                             -else
                                 -for(var i = 0; i < comments.length; i++){
                                     li.commentLi
-                                        a.commenterName(href='/'+ comments[i].username + '/index') #{comments[i].username}
+                                        a.commenterName(href='/'+ comments[i].username + '/index') #{comments[i].name}
                                         div.commentContent
                                             pre #{comments[i].content}
                                         ul.commentTag
                                             li.commentTime
                                                 span.commentTime #{comments[i].time}
-                                            li.commentDelete
-                                                a.tag(href='') 删除
+                                            -if(hasLogin == true)
+                                                -if(isAdmin == true)
+                                                    li.commentDelete
+                                                        a.deleteComment.tag(href= ''+ comments[i].commentid) 删除
+                                                -else
+                                                    -if(visitorUsername == comments[i].username)
+                                                        li.commentDelete
+                                                            a.deleteComment.tag(href= ''+ comments[i].commentid) 删除
                                     hr
                                 -}
-                    -if( loginStatus == true)
+                    -if( hasLogin == true)
                         #newComment
                             .commentHeader
                                 p 发评论

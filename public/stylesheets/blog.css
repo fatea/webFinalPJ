@@ -257,6 +257,8 @@ ul.bottomTagList li:last-child {
 
 
 div.postContent {
+    word-wrap: break-word;
+    word-break: normal;
 	clear: both;
 	margin-top: 30px;
 	margin-bottom: 30px;

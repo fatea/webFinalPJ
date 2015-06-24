@@ -69,7 +69,6 @@ Post.prototype.save = function(){
                             }
                             else{
 
-
                                 subcb(null, result);
                             }
                         });
@@ -105,7 +104,6 @@ Post.prototype.update = function(){
     var date = new Date();
     var postid = this.postid;
     var post = {
-
         title : this.title,
         content : this.content,
         category : this.category,
@@ -263,7 +261,9 @@ var sqlSet = [username, date, title];
                             var postid =postResult.postid;
 
                                 async.parallel({
+
                                 comments : function(subsubcb){
+
                                     var selectCommentSQL = 'SELECT * FROM COMMENT_LIST WHERE postid = ?';
                                     db.query(selectCommentSQL, postid, function (err, results) {
                                         if (err) {
