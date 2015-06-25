@@ -22,8 +22,6 @@ Post.prototype.save = function(){
         content : this.content,
         date : dateFormat.getDate(date),
         time :dateFormat.getTime(date),
-        category : this.category,
-        tag : Trim.normal(this.tag),
         realdate : date,
         realtime : date
     };
@@ -106,9 +104,7 @@ Post.prototype.update = function(){
     var postid = this.postid;
     var post = {
         title : this.title,
-        content : this.content,
-        category : this.category,
-        tag : Trim.normal(this.tag)
+        content : this.content
 
     };
 
@@ -118,7 +114,7 @@ Post.prototype.update = function(){
 
     async.waterfall([
         function(callback){
-            var updateSQL = 'UPDATE POST_LIST SET title = :title, content = :content, category = :category, tag = :tag';
+            var updateSQL = 'UPDATE POST_LIST SET title = :title, content = :content';
             db.query(updateSQL, post, function(err, result){
                 if (err){
                     console.log(post);
@@ -188,18 +184,41 @@ Post.getAllPost = function(username, callback) {
 
     //var testTagSQL = 'SELECT GROUP_CONCAT(tag) AS tag FROM TAG_LIST WHERE username = ?  GROUP BY postid';
 
+    var whatTheFuckSQL = 'SELECT * ' +
+        'FROM COMMENT_LIST ' +
+        'WHERE username = ? ' +
+        'GROUP BY postid ';
 
-   var testSQL = 'SELECT POST_LIST.* , CATEGORY_LIST.category, GROUP_CONCAT(TAG_LIST.tag) AS tag ' +
+
+    var whetherCanSQL = 'SELECT POST_LIST.* , CATEGORY_LIST.category, COUNT(DISTINCT(COMMENT_LIST.commentid)) AS commentCount , GROUP_CONCAT(DISTINCT(TAG_LIST.tag)) AS tag ' +
+        'FROM POST_LIST ' +
+        'LEFT JOIN CATEGORY_LIST ' +
+        'ON POST_LIST.postid = CATEGORY_LIST.postid ' +
+        'LEFT JOIN COMMENT_LIST ' +
+        'ON POST_LIST.postid = COMMENT_LIST.postid ' +
+        'LEFT JOIN TAG_LIST ' +
+        'ON POST_LIST.postid = TAG_LIST.postid ' +
+        'WHERE POST_LIST.username = ? ' +
+        'GROUP BY POST_LIST.postid ' +
+        'ORDER BY POST_LIST.realtime DESC';
+
+
+
+
+
+   var selectSQL = 'SELECT POST_LIST.* , CATEGORY_LIST.category , GROUP_CONCAT(TAG_LIST.tag) AS tag , COUNT(DISTINCT(COMMENT_LIST.commentid)) AS commentCount ' +
        'FROM POST_LIST ' +
        'LEFT JOIN CATEGORY_LIST ' +
        'ON  POST_LIST.postid = CATEGORY_LIST.postid ' +
        'LEFT JOIN TAG_LIST ' +
        'ON POST_LIST.postid = TAG_LIST.postid ' +
+       'LEFT JOIN COMMENT_LIST ' +
+       'ON POST_LIST.postid = COMMENT_LIST.postid ' +
        'WHERE POST_LIST.username = ? ' +
        'GROUP BY POST_LIST.postid ' +
        'ORDER BY POST_LIST.realtime DESC';
 
-    db.query(testSQL, [username], function(err, results){
+    db.query(whetherCanSQL, [username], function(err, results){
        if(err){
            console.log(err+' Err happens in Post.getAllPost');
        } else{
@@ -207,7 +226,7 @@ Post.getAllPost = function(username, callback) {
                console.log('没有博文记录');
                callback(null, false);
            }else{
-               //console.log(results);
+               console.log(results);
                callback(null, results);
            }
        }
@@ -335,7 +354,7 @@ var sqlSet = [username, date, title];
                                                 console.log('category not found');
                                                 subsubcb(null, false);
                                             }else{
-                                                //console.log('this is the original category: '+results);
+                                                //console.log('this is the original category: '+results[0].category);
                                                 subsubcb(null, results[0].category);}
 
 
@@ -377,7 +396,7 @@ var sqlSet = [username, date, title];
                         }
                     ],
                     function(err, finalResult){
-                        //console.log(finalResult);
+
                         cb(null, finalResult);
                     }
                 );
@@ -437,8 +456,6 @@ Post.getAllCategory = function(username, callback){
             finalResult = (results.hasPost != false)?(results.hasPost):(results.hasNoPost);
         }
 
-
-        console.log(finalResult);
         callback(null, finalResult);
 
     });

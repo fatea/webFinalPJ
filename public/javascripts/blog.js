@@ -50,6 +50,41 @@ require(['jquery', 'trim', 'check'], function($, Trim, Check) {
     });
 
 
+
+    $('#commentTag').click(function(){
+        var urlArr = $(location).attr('href').split('/');
+        var username = urlArr[3];
+        var date = urlArr[4];
+        var title = urlArr[5];
+
+
+        var href = $(this).attr('href');
+
+        $.ajax(
+            {
+                url: ('/' + username + '/' + date + '/' + title + '/commenttag'),
+                type: 'POST',
+                cache: false,
+                success: function (data, status) {
+                    if(data.status == true){
+                        var commentArea = $('#commentArea');
+                        $('html,body').animate({scrollTop: commentArea.offset().top}, 0);
+                        commentArea[0].focus();
+                    }
+                    else{
+                        alert('只有登录用户才可以评论');
+                    }
+
+                }
+            }
+        );
+
+        return false;
+    });
+
+
+
+
 //新增评论
     $('#commentSubmit').click(function () {
         var commentArea = $('#commentArea');

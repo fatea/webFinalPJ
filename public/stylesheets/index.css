@@ -163,7 +163,7 @@ ul.category {
 	list-style-type: square;
 }
 
-span.categoryCount,span.postTime,span.tagTitle {
+span.categoryCount,span.postTime,span.tagTitle,span.bottomCount {
 	color: grey;
 	font-size: 12px;
 }
@@ -262,6 +262,9 @@ ul.bottomTag>li:last-child {
 
 
 div.postContent {
+    word-wrap: break-word;
+    word-break: normal;
+    text-align: justify;
 	clear: both;
 	margin-top: 30px;
 	margin-bottom: 30px;

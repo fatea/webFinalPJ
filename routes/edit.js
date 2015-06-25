@@ -4,7 +4,7 @@ var Post = require('../models/post');
 var getContent = require('./lib/getContent');
 var async = require('async');
 var db = require('../models/db');
-
+var markdown = require('markdown');
 //auth session
 var auth = require('./lib/auth');
 router.get('/', auth.pleaseLogin);
@@ -140,6 +140,7 @@ router.post('/', function(req, res,next){
                         var updatePostSQL = 'UPDATE POST_LIST SET ? WHERE postid = '+postid+'';
                         var updateCategorySQL = 'UPDATE CATEGORY_LIST SET ? WHERE postid = '+postid+'';
                         //写到这里了
+                        
                     }
                 ]
             );

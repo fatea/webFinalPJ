@@ -23,9 +23,10 @@ a:hover {
 			text-decoration: underline;
 }
 #wrapper {
-	    width: 900px;
+    width: 900px;
 	margin-top: 50px;
-	margin-left: auto; margin-right: auto;
+	margin-left: auto;
+    margin-right: auto;
 }
 
 hr {
@@ -45,7 +46,7 @@ hr#imgHr {
 
 p.topwrap {
 	color: white;
-		margin-top: 10px;
+	margin-top: 10px;
 	margin-bottom: 10px;
 }
 
@@ -72,10 +73,8 @@ ul.banner.topwrap {
 
 ul.banner.topwrap li{
 	float: left;
-	border-right: dotted;
-	border-right-width: 1px;
-
-	padding-left: 5px;
+    border-right: 1px dotted;
+    padding-left: 5px;
 	padding-right: 5px;
 
 }
@@ -240,9 +239,8 @@ ul.categoryList a.tag {
 
 
 ul.bottomTagList li {
-		border-right: dotted;
-	border-right-width: 1px;
-	padding-left: 10px;
+    border-right: 1px dotted;
+    padding-left: 10px;
 	padding-right: 10px;
 
 }
@@ -262,10 +260,13 @@ div.postContent {
 	clear: both;
 	margin-top: 30px;
 	margin-bottom: 30px;
+    text-align: justify;
+
+
 }
 
 div.postContent p {
-	text-indent: 30px;
+	/*text-indent: 30px;*/
 	margin-top: 5px;
 	margin-bottom: 5px;
 	line-height: 160%;

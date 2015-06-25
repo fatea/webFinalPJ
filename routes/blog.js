@@ -3,7 +3,7 @@ var router = express.Router({ mergeParams: true});
 //var clone = require('clone');
 var async = require('async');
 var getContent = require('./lib/getContent');
-var markdown = require('markdown');
+var markdown = require('markdown').markdown;
 var dateFormat = require('../routes/lib/dateFormat');
 //var utf = require('./lib/utf');
 var db = require('../models/db');
@@ -19,7 +19,7 @@ router.get('/', function(req, res, next) {
             var post = results.postData.post;
             var comments = results.postData.comments;
             var tag = results.postData.tag;
-
+            var category = results.postData.category;
 
 
             var fullUrl =  req.protocol + '://' + req.get('host') + '/'+req.params.username+'/index';
@@ -39,7 +39,6 @@ router.get('/', function(req, res, next) {
                 var hasLogin = (typeof(req.session.username) != 'undefined');
                 var isAdmin = ((hasLogin == true) && (req.session.username == user.username));
 
-
                 res.render('blog', {
                     //postData : postData,
                     hasPost : (typeof(post)!='undefined'&&post.length > 0),
@@ -48,7 +47,7 @@ router.get('/', function(req, res, next) {
                     mainTitle : user.name +'的博客',
                     subTitle : fullUrl.toString(),
                     comments : comments,
-                    category : post.category,
+                    category : category,
                     favor : post.favor,
                     tags : tag,
                     guest : (req.params.username != req.session.username),
@@ -56,7 +55,7 @@ router.get('/', function(req, res, next) {
                     hasLogin : hasLogin,
                     isAdmin : isAdmin,
                     title : post.title,
-                    content: markdown.parse(post.content),
+                    content: markdown.toHTML(post.content),
                     date : post.date,
                     time : post.time,
                     pageview : post.pageview,
@@ -67,6 +66,18 @@ router.get('/', function(req, res, next) {
         });
 
 });
+
+router.post('/commenttag', function(req, res, next){
+    if(typeof(req.session.username)!= 'undefined'){
+        res.json({status : true});
+        res.end();
+    }
+    else{
+        res.json({status : false});
+        res.end();
+    }
+});
+
 
 
 router.post('/like', function(req, res, next){
