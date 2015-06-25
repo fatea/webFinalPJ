@@ -140,7 +140,7 @@ router.post('/', function(req, res,next){
                         var updatePostSQL = 'UPDATE POST_LIST SET ? WHERE postid = '+postid+'';
                         var updateCategorySQL = 'UPDATE CATEGORY_LIST SET ? WHERE postid = '+postid+'';
                         //写到这里了
-                        
+
                     }
                 ]
             );
