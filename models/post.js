@@ -3,6 +3,7 @@ var dateFormat = require('../routes/lib/dateFormat');
 var async = require('async');
 var Trim = require('../routes/lib/trim');
 
+
 function Post(postData){
     this.username = postData.username;
     this.title = postData.title;
@@ -185,6 +186,44 @@ Post.prototype.update = function(){
 
 Post.getAllPost = function(username, callback) {
 
+    //var testTagSQL = 'SELECT GROUP_CONCAT(tag) AS tag FROM TAG_LIST WHERE username = ?  GROUP BY postid';
+
+
+   var testSQL = 'SELECT POST_LIST.* , CATEGORY_LIST.category, GROUP_CONCAT(TAG_LIST.tag) AS tag ' +
+       'FROM POST_LIST ' +
+       'LEFT JOIN CATEGORY_LIST ' +
+       'ON  POST_LIST.postid = CATEGORY_LIST.postid ' +
+       'LEFT JOIN TAG_LIST ' +
+       'ON POST_LIST.postid = TAG_LIST.postid ' +
+       'WHERE POST_LIST.username = ? ' +
+       'GROUP BY POST_LIST.postid ' +
+       'ORDER BY POST_LIST.realtime DESC';
+
+    db.query(testSQL, [username], function(err, results){
+       if(err){
+           console.log(err+' Err happens in Post.getAllPost');
+       } else{
+           if(results.length == 0){
+               console.log('没有博文记录');
+               callback(null, false);
+           }else{
+               //console.log(results);
+               callback(null, results);
+           }
+       }
+    });
+
+
+
+
+
+
+
+
+
+
+
+/*
             var selectSQL = 'SELECT * FROM POST_LIST WHERE username = ?';
             db.query(selectSQL, username, function (err, results) {
                     if (err) {
@@ -200,6 +239,10 @@ Post.getAllPost = function(username, callback) {
 
                 }
             );
+    */
+
+
+
 
 };
 
@@ -374,16 +417,27 @@ Post.getAllCategory = function(username, callback){
                 }
 
                 if(results.length == 0){
+
                     subcb(null, false);
                 }else{
                     subcb(null, results);}
             });
         }
     }, function(err, results){
+        var finalResult = null;
+        if(results.hasNoPost != false){
+
         for(var i = 0; i < results.hasNoPost.length; i++){
             results.hasNoPost[i].total = 0;
         }
-        var finalResult = results.hasPost.concat(results.hasNoPost);
+        }
+        if((results.hasPost != false) && (results.hasNoPost != false)){
+            finalResult = results.hasPost.concat(results.hasNoPost);
+        }else{
+            finalResult = (results.hasPost != false)?(results.hasPost):(results.hasNoPost);
+        }
+
+
         console.log(finalResult);
         callback(null, finalResult);
 

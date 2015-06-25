@@ -15,7 +15,6 @@ router.get('/', function(req, res, next) {
                 var categoryData = results.categoryData;
                 var tagData = results.tagData;
 
-                console.log(postData);
                 var fullUrl =  req.protocol + '://' + req.get('host') + req.originalUrl;
 
 
@@ -47,17 +46,17 @@ router.get('/', function(req, res, next) {
                     for(i= 0; i < postData.length;i++){
 
                         categoryArr[i] = postData[i].category;
-                        tagsArr[i] = postData[i].tag.split(' ');
+                        if(postData[i].tag != ''){
+                        tagsArr[i] = postData[i].tag.split(',');}
+                        else{
+                            tagsArr[i] = null;
+                        }
+
                         titleArr[i] = postData[i].title;
                         contentArr[i] = markdown.parse(postData[i].content) ;
                         timeArr[i] = postData[i].time;
                         hrefArr[i] = '/'+postData[i].username+'/'+postData[i].date+'/'+postData[i].title
                     }
-
-
-
-                    console.log(tagsArr);
-
 
                     res.render('index', {
                         //postData : postData,

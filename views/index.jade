@@ -67,6 +67,9 @@ html(lang='zh-CN')
                                                     each tag in tagsArr[i]
                                                         li
                                                             a.tag(href='') #{tag}
+                                                -else
+                                                    li
+                                                        span.tagTitle 暂无标签
 
                                         li.categoryListLi
                                             span.tagTitle 分类:
