@@ -125,6 +125,7 @@ require(['jquery', 'trim', 'check'], function($, Trim, Check) {
                             '</li>' +
                             '<hr/>');
                             $('#commentUL').append(comment);
+                            $('#commentArea').val('');
                         }
 
                     }

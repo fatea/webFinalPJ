@@ -8,6 +8,8 @@ require.config(
     }
 );
 require(['jquery', 'trim', 'check'], function($, Trim, Check) {
+    $('#editForm').submit(function(){return false;});
+
     $('#titleArea').keydown(function(event){
         var realEvent = event||window.event;
         if(realEvent.keyCode==13)
@@ -68,7 +70,46 @@ function validateForm() {
     return boolResult;
 }
 
-    $('#editForm').submit(validateForm);
+
+
+    $('#editSubmit').click(
+        function(){
+            if(validateForm() == true){
+                var urlArr = $(location).attr('href').split('/');
+                var username = urlArr[3];
+                var date = urlArr[5];
+
+
+
+                var titleArea = $('#titleArea').val();
+                var editArea = $('#editArea').val();
+                var tagArea = $('#tagArea').val();
+                var categorySelect = $('#categorySelect').val();
+                $.ajax(
+                    {   url: $('#editForm').attr('action'),
+                        type: 'POST',
+                        cache: false,
+                        data : {titleArea: titleArea,
+                            editArea : editArea,
+                            tagArea : tagArea,
+                            categorySelect : categorySelect
+                        },
+                        success : function(data, status){
+                            if(data.status == true){
+                                alert('发表成功!');
+                                window.location= ('/'+username+'/'+date+'/'+titleArea);
+
+                            }
+                            if(data.status == false){
+                                alert('发表失败!');
+                                window.location.reload();
+                            }
+                        }
+                    }
+                );
+            }
+        }
+    );
 
 
 
@@ -85,7 +126,7 @@ var flag = {bool : true};
 
 
         $.ajax(
-            {   url: ('/' + username + '/edit/'+ date + '/' + title + '/newcategory'),
+            {   url: ('/' + username + '/edit/newcategory'),
                 type: 'POST',
                 cache: false,
                 data : {category : category},

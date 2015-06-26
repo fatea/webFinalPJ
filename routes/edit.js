@@ -43,13 +43,14 @@ router.get('/', function(req, res, next) {
                 function(err, results){
                     var user = results.userData[0];
                     var postNotFound = (results.postData == false);
-                    var post = results.postData.post;
-                    var category = results.postData.category;
-                    var tag = results.postData.tag.toString().replace(/,/g,' ');
+
                     if(postNotFound){
                         next();
                     }
                     else{
+                        var post = results.postData.post;
+                        var category = results.postData.category;
+                        var tag = results.postData.tag.toString().replace(/,/g,' ');
 
                         async.waterfall(
                             [
@@ -100,13 +101,46 @@ router.post('/', function(req, res,next){
                 tag : req.body.tagArea,
                 category : req.body.categorySelect
             };
+            console.log(postData);
             var post = new Post(postData);
             post.save();
             res.redirect('/'+req.session.username+'/index');
 
 
 
-        }else{
+        }
+        else if(req.params.action == 'newcategory') {
+            console.log(req.params);
+            console.log(req.body);
+            var category_username = req.params.username;
+            var category = req.body.category;
+
+                var insertSQL = 'INSERT INTO CATEGORY_LIST SET ?';
+                db.query(
+                    insertSQL, {username: category_username, category: category},
+                    function (err, results) {
+                        if (err) {
+                            console.log(err + ' Err happens in router:edit.js.newcategory.insertSQL');
+                            res.json({status: false});
+                            res.end();
+                        }
+                        else {
+                            if (typeof(results.insertId) == 'undefined') {
+                                res.json({status: false});
+                                res.end();
+                            }
+                            else {
+                                res.json({status: true});
+                                res.end();
+                            }
+                        }
+                    }
+                );
+
+        }
+
+
+        else{
             var username = req.session.username;
             var date = req.params.date;
             var title = req.params.title;
@@ -237,17 +271,21 @@ router.post('/', function(req, res,next){
                             },
                             function (err, results) {
                                 if ((results.updatePost == true) && (results.updateCategory == true) && (results.deleteAndInsertTag == true)) {
-                                 res.redirect('/' + username + '/' + date + '/' + title+'');
+                                 res.json({status:true});
+                                    res.end();
                                     console.log(title);
                                     console.log(updateData.title);
                                 } else {
+                                    res.json({status:false});
+                                    res.end();
                                     console.log('这是最终的结果 ' + results);
                                     console.log('博文修改失败');
                                 }
                             });
 
 
-                    }else{
+                    }else{res.json({status:false});
+                            res.end();
                             console.log('博文修改失败');
                         }
                     }
@@ -266,14 +304,12 @@ router.post('/', function(req, res,next){
 
 
 
-
+/*
 router.post('/newcategory', function(req, res, next){
     if((req.session.username == req.params.username)){
         console.log(req.params);
         console.log(req.body);
         var username = req.params.username;
-        var date = req.params.date;
-        var title = req.params.title;
         var category = req.body.category;
 
         async.waterfall(
@@ -302,7 +338,7 @@ router.post('/newcategory', function(req, res, next){
                     if(postid != false){
                     var insertSQL = 'INSERT INTO CATEGORY_LIST SET ?';
                     db.query(
-                        insertSQL,{username:username,postid:postid, category:category},
+                        insertSQL,{username:username , category:category},
                         function(err, results){
                             if(err){
                                 console.log(err + ' Err happens in router:edit.js.newcategory.insertSQL');
@@ -336,5 +372,6 @@ router.post('/newcategory', function(req, res, next){
     }
 
 });
+*/
 
 module.exports = router;

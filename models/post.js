@@ -48,7 +48,7 @@ Post.prototype.save = function(){
                 }
                 else{
 
-
+                    console.log('post.save : post 这边有点问题啊');
                     callback(null, result.insertId);
 
                 }
@@ -67,11 +67,13 @@ Post.prototype.save = function(){
                                 console.log('err happens in Post.save category');
                             }
                             else{
+                                console.log('post.save : category这边有点问题啊');
 
                                 subcb(null, result);
                             }
                         });
                     },
+
 
                     tag : function(subcb){
 
@@ -87,7 +89,7 @@ Post.prototype.save = function(){
                                 console.log('err happens in Post.save tag');
                             }
                             else{
-
+                                console.log('post.save : tag 这边有点问题啊');
                                 subcb(null, result);
                             }
                         });
