@@ -5,6 +5,7 @@ var getContent = require('./lib/getContent');
 var async = require('async');
 var db = require('../models/db');
 var markdown = require('markdown');
+var Trim = require('./lib/trim');
 //auth session
 var auth = require('./lib/auth');
 router.get('/', auth.pleaseLogin);
@@ -43,7 +44,8 @@ router.get('/', function(req, res, next) {
                     var user = results.userData[0];
                     var postNotFound = (results.postData == false);
                     var post = results.postData.post;
-
+                    var category = results.postData.category;
+                    var tag = results.postData.tag.toString().replace(/,/g,' ');
                     if(postNotFound){
                         next();
                     }
@@ -60,9 +62,9 @@ router.get('/', function(req, res, next) {
                                         actionURL : actionURL,
                                         hasPost : (typeof(post)!='undefined'&&post.length > 0),
                                         username: user.username,
-                                        presentCategory : post.category,
+                                        presentCategory : category,
                                         categoryArr : categoryResult,
-                                        tags : post.tag,
+                                        tag : tag,
                                         title : post.title,
                                         content: post.content
 
@@ -112,7 +114,7 @@ router.post('/', function(req, res,next){
             var updateData = {
                 title : req.body.titleArea,
                 content : req.body.editArea,
-                tag : req.body.tagArea,
+                tag : Trim.normal(req.body.tagArea).split(' '),
                 category : req.body.categorySelect
             };
             async.waterfall(
@@ -123,7 +125,7 @@ router.post('/', function(req, res,next){
                             selectSQL, [username, date, title],
                             function(err, results){
                                 if(err){
-                                    console.log(err + ' Err happens in router:edit.js.newcategory.selectSQL');
+                                    console.log(err + ' Err happens in router:edit.js.editPost.selectPost');
                                 }
                                 else{
                                     if(results.length > 0){
@@ -136,11 +138,118 @@ router.post('/', function(req, res,next){
                             }
                         );
                     },
-                    function(postid, callback){
-                        var updatePostSQL = 'UPDATE POST_LIST SET ? WHERE postid = '+postid+'';
-                        var updateCategorySQL = 'UPDATE CATEGORY_LIST SET ? WHERE postid = '+postid+'';
+                    function(postid, callback) {
+                        if(postid != false){
+
+                        var updatePostSQL = 'UPDATE POST_LIST SET ? WHERE postid = ' + postid + '';
+                        var updateCategorySQL = 'UPDATE CATEGORY_LIST SET ? WHERE postid = ' + postid + '';
+                        var deleteTagSQL = 'DELETE FROM TAG_LIST WHERE postid = ' + postid + '';
+                        var insertTagSQL = 'INSERT INTO TAG_LIST (username, postid, tag) VALUES ?';
                         //写到这里了
 
+                        async.parallel({
+                                updatePost: function (subcb) {
+                                    db.query(updatePostSQL, {
+                                        title: updateData.title,
+                                        content: updateData.content
+                                    }, function (err, results) {
+                                        if (err) {
+                                            console.log(err + ' Err happens in router:edit.js.editPost.updatePost');
+                                        }
+                                        else {
+                                            if (results.affectedRows > 0) {
+                                                subcb(null, true);
+                                            }
+                                            else {
+                                                subcb(null, false);
+                                            }
+                                        }
+                                    });
+
+                                },
+                                updateCategory: function (subcb) {
+                                    db.query(updateCategorySQL, {category: updateData.category}, function (err, results) {
+                                        if (err) {
+                                            console.log(err + ' Err happens in router:edit.js.editPost.updateCategory');
+                                        }
+                                        else {
+                                            if (results.affectedRows > 0) {
+                                                subcb(null, true);
+                                            }
+                                            else {
+                                                subcb(null, false);
+                                            }
+                                        }
+                                    });
+                                },
+                                deleteAndInsertTag: function (subcb) {
+                                    async.waterfall([
+                                        function (subsubcb) {
+                                            db.query(deleteTagSQL, function (err, results) {
+                                                if (err) {
+                                                    console.log(err + ' Err happens in router:edit.js.editPost.deleteTag');
+                                                }
+                                                else {
+                                                    subsubcb(null, true);
+                                                    /*
+                                                     if (results.affectedRows > 0) {
+                                                     subsubcb(null, true);
+                                                     }
+                                                     else {
+                                                     console.log('删除已有tag有问题');
+                                                     subsubcb(null, false);
+                                                     }
+                                                     */
+                                                }
+                                            });
+                                        },
+                                        function (deleteSuccess, subsubcb) {
+                                            if (deleteSuccess) {
+                                                var tagArr = [];
+                                                for (var i = 0; i < updateData.tag.length; i++) {
+                                                    tagArr[i] = [username, postid, updateData.tag[i]];
+                                                }
+
+                                                db.query(insertTagSQL, [tagArr],
+                                                    function (err, results) {
+                                                        if (err) {
+                                                            console.log(err + ' Err happens in router:edit.js.editPost.insertTag');
+                                                        }
+                                                        else {
+                                                            if (results.affectedRows > 0) {
+                                                                subsubcb(null, true);
+                                                            }
+                                                            else {
+                                                                console.log('重新新增Tag出现问题');
+                                                                subsubcb(null, false);
+                                                            }
+                                                        }
+                                                    });
+
+                                            } else {
+                                                subsubcb(null, false);
+                                            }
+                                        }
+                                    ], function (err, results) {
+                                        subcb(null, results);
+                                    });
+                                }
+                            },
+                            function (err, results) {
+                                if ((results.updatePost == true) && (results.updateCategory == true) && (results.deleteAndInsertTag == true)) {
+                                 res.redirect('/' + username + '/' + date + '/' + title+'');
+                                    console.log(title);
+                                    console.log(updateData.title);
+                                } else {
+                                    console.log('这是最终的结果 ' + results);
+                                    console.log('博文修改失败');
+                                }
+                            });
+
+
+                    }else{
+                            console.log('博文修改失败');
+                        }
                     }
                 ]
             );

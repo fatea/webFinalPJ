@@ -182,15 +182,9 @@ Post.prototype.update = function(){
 
 Post.getAllPost = function(username, callback) {
 
-    //var testTagSQL = 'SELECT GROUP_CONCAT(tag) AS tag FROM TAG_LIST WHERE username = ?  GROUP BY postid';
-
-    var whatTheFuckSQL = 'SELECT * ' +
-        'FROM COMMENT_LIST ' +
-        'WHERE username = ? ' +
-        'GROUP BY postid ';
 
 
-    var whetherCanSQL = 'SELECT POST_LIST.* , CATEGORY_LIST.category, COUNT(DISTINCT(COMMENT_LIST.commentid)) AS commentCount , GROUP_CONCAT(DISTINCT(TAG_LIST.tag)) AS tag ' +
+    var selectSQL = 'SELECT POST_LIST.* , CATEGORY_LIST.category, COUNT(DISTINCT(COMMENT_LIST.commentid)) AS commentCount , GROUP_CONCAT(DISTINCT(TAG_LIST.tag)) AS tag ' +
         'FROM POST_LIST ' +
         'LEFT JOIN CATEGORY_LIST ' +
         'ON POST_LIST.postid = CATEGORY_LIST.postid ' +
@@ -205,8 +199,8 @@ Post.getAllPost = function(username, callback) {
 
 
 
-
-   var selectSQL = 'SELECT POST_LIST.* , CATEGORY_LIST.category , GROUP_CONCAT(TAG_LIST.tag) AS tag , COUNT(DISTINCT(COMMENT_LIST.commentid)) AS commentCount ' +
+/*
+   var whetherCanSQL = 'SELECT POST_LIST.* , CATEGORY_LIST.category , GROUP_CONCAT(TAG_LIST.tag) AS tag , COUNT(DISTINCT(COMMENT_LIST.commentid)) AS commentCount ' +
        'FROM POST_LIST ' +
        'LEFT JOIN CATEGORY_LIST ' +
        'ON  POST_LIST.postid = CATEGORY_LIST.postid ' +
@@ -216,9 +210,9 @@ Post.getAllPost = function(username, callback) {
        'ON POST_LIST.postid = COMMENT_LIST.postid ' +
        'WHERE POST_LIST.username = ? ' +
        'GROUP BY POST_LIST.postid ' +
-       'ORDER BY POST_LIST.realtime DESC';
+       'ORDER BY POST_LIST.realtime DESC';*/
 
-    db.query(whetherCanSQL, [username], function(err, results){
+    db.query(selectSQL, [username], function(err, results){
        if(err){
            console.log(err+' Err happens in Post.getAllPost');
        } else{

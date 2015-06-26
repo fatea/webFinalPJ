@@ -205,8 +205,11 @@ textarea {
 	resize: none;
 }
 #titleArea {
+    white-space: nowrap; /* 禁止換行 */
+    overflow: hidden; /* 不顯示捲軸 */
+    resize:none; /* 禁止瀏覽器拖放區塊大小 */
 	width: 99.7%;
-	overflow: auto;
+	/*overflow: auto;*/
 	height: 23px;
 	border: 1px solid rgba(0,0,0,0.2); 
 			margin-top: 8px;
@@ -271,7 +274,7 @@ select {
 	border: 1px solid rgba(0,0,0,0.2); 
   	border-radius: 0;
   	-webkit-appearance:none;
-	background: url("../pics/select_arrow.png") no-repeat scroll right center transparent;
+	background: url("../images/select_arrow.png") no-repeat scroll right center transparent;
 	padding-right: 15px;
 }
 
@@ -280,12 +283,17 @@ select option:first-child {
 }
 
 #tagArea {
+    white-space: nowrap; /* 禁止換行 */
+    overflow: hidden; /* 不顯示捲軸 */
+    resize:none; /* 禁止瀏覽器拖放區塊大小 */
 	width: 550px;
 	height: 20px;
 		vertical-align: top;
 			border: 1px solid rgba(0,0,0,0.2); 
   	border-radius: 0;
 }
+
+
 
 footer {
 clear: both;

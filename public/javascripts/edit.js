@@ -8,17 +8,61 @@ require.config(
     }
 );
 require(['jquery', 'trim', 'check'], function($, Trim, Check) {
+    $('#titleArea').keydown(function(event){
+        var realEvent = event||window.event;
+        if(realEvent.keyCode==13)
+        {return false;}
+    });
+    $('#tagArea').keydown(function(event){
+        var realEvent = event||window.event;
+        if(realEvent.keyCode==13)
+        {return false;}
+    });
+
 function validateForm() {
     var boolResult = true;
-   var titleArea =  $('#titleArea').val();
-    var editArea = $('#editArea').val();
-    if(Trim.isEmpty(Trim.all(titleArea))){
+   var titleArea =  $('#titleArea');
+    var editArea = $('#editArea');
+    var tagArea = $('#tagArea');
+    var originalTag = tagArea.val();
+
+
+
+
+    if(Trim.isEmpty(Trim.all(titleArea.val()))){
         boolResult = false;
         alert('标题不得为空');
     }
-    if(Trim.isEmpty(Trim.all(editArea))){
+    if(Trim.isEmpty(Trim.all(editArea.val()))){
         boolResult = false;
         alert('内容不得为空');
+    }
+
+    var tagPunctuationAlertFlag = false;
+
+    for(var i = 0; i < originalTag.length; i++){
+        if((originalTag.charAt(i) == ',') || (originalTag.charAt(i) == '，')|| (originalTag.charAt(i)==' ')){
+            if(tagPunctuationAlertFlag ==  false){
+                boolResult = false;
+                alert('标签不得包含半角、全角逗号或全角空格');
+                tagPunctuationAlertFlag = true;
+            }
+        }
+    }
+
+    if(tagPunctuationAlertFlag == false){
+        //调整tag字符串以便post.save
+        var tag = originalTag.replace(/\s+/g, ' ');
+    }
+
+
+
+    if(boolResult == true){
+        var originalTitle = titleArea.val();
+        var title = Trim.normal(originalTitle);
+        titleArea.val(title);
+        tagArea.val(tag);
+
     }
 
     return boolResult;
