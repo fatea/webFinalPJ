@@ -1,0 +1,145 @@
+doctype html
+html(lang='zh-CN')
+    head
+        meta(charset='UTF-8')
+        title 博文目录
+        link(href='/stylesheets/blog_list.css', rel='stylesheet', type='text/css')
+    body
+        #wrapper
+            #topwrap
+                p.title.topwrap #{mainTitle}
+                p.subtitle.topwrap #{subTitle}
+                ul.banner.topwrap
+                    li
+                        a(href='/'+username+'/index') 首页
+                    li
+                        a(href='/'+username+'/blog_list/全部博文') 博文目录
+                    li
+                        a(href='') 图片
+                    li
+                        a(href='about') 关于我
+            -if(!guest)
+                input#newPost.buttons(type='submit', value='发博文')
+            #midwrap
+                .left.midwrap
+                    #category.container
+                        .header
+                            p.title 分类
+                        ul.category
+                            -if(!hasPost)
+                                -if(selectedCategory == '全部博文')
+                                    li.selectedCategory
+                                        a.categoryTag.tag(href='postlist.html') 全部博文
+                                        span.categoryCount (0)
+                                -else
+                                    li
+                                        a.categoryTag.tag(href='postlist.html') 全部博文
+                                        span.categoryCount (0)
+                            -else
+                                -if(selectedCategory == '全部博文')
+                                    li.selectedCategory
+                                        a.categoryTag.tag(href='/'+username+'/blog_list/全部博文') 全部博文
+                                        span.categoryCount #{'(' + categoryLength + ')'}
+                                -else
+                                    li
+                                        a.categoryTag.tag(href='/'+username+'/blog_list/全部博文') 全部博文
+                                        span.categoryCount #{'(' + categoryLength + ')'}
+                                -for(var j = 0; j < category.length; j++){
+                                    -if(selectedCategory == category[j].category)
+                                        li.realCategory.selectedCategory
+                                            a.realCategoryTag.categoryTag.tag(href='/'+username+'/blog_list/'+category[j].category) #{category[j].category}
+                                            span.categoryCount #{'(' + category[j].total + ')'}
+                                            -if (guest == false)
+                                                a.categoryEdit.postEdit.tag(href='/' + username + '/editcategory/' + category[j].category) [编辑]
+                                                a.categoryDelete.postEdit.tag(href='/' + username + '/deletecategory/' + category[j].category) [删除]
+                                    -else
+                                        li.realCategory
+                                            a.realCategoryTag.categoryTag.tag(href='/'+username+'/blog_list/'+category[j].category) #{category[j].category}
+                                            span.categoryCount #{'(' + category[j].total + ')'}
+                                            -if (guest == false)
+                                                a.categoryEdit.postEdit.tag(href='/'+username+'/editcategory/'+category[j].category) [编辑]
+                                                a.categoryDelete.postEdit.tag(href='/'+username+'/deletecategory/'+category[j].category) [删除]
+
+                                -}
+                    #searchBox.container
+                        .header
+                            p.title 搜索博文
+                            form#searchForm(method='POST', action='/search')
+                                .searchMain
+                                    p.searchTag 搜索范围
+                                    input#searchSingleUser.buttons(type='radio', name='scope',checked='checked', value='singleUser')
+                                    span.searchScope 只搜某用户
+                                    input#searchAllUser.buttons(type='radio', name='scope',  value='allUser')
+                                    span.searchScope 全站搜索
+                                    input#searchUsername(type='text', name='searchUsername')
+                                .searchMain
+                                    p.searchTag 搜索选项
+                                    p.searchTag 关键词出现位置
+                                    input.buttons(type='radio', name='keywordPlace', checked='checked', value='inTitle')
+                                    span.searchScope 标题
+                                    input.buttons(type='radio', name='keywordPlace',  value='inContent')
+                                    span.searchScope 正文
+                                    input.buttons(type='radio', name='keywordPlace', value='inTag')
+                                    span.searchScope 按标签搜索
+                                .searchMain
+                                    p.searchTag 排序
+                                    input.buttons(type='radio', name='orderBy', checked='checked',value='realtime')
+                                    span.searchScope 按发表时间排序
+                                    input.buttons(type='radio', name='orderBy', value='pageview')
+                                    span.searchScope 按阅读量排序
+                                    input.buttons(type='radio', name='order', checked='checked',value='ASC')
+                                    span.searchScope 升序
+                                    input.buttons(type='radio', name='order', value='DESC')
+                                    span.searchScope 降序
+
+                                .searchMain
+                                    p.searchTag 搜索关键词
+                                    input#searchInput(type='text' name = 'searchKeyword')
+                                    input#searchSubmit.buttons(type='submit', value='搜索')
+                #postList.right.midwrap.container
+                    #postListHeader.header
+                        p.title #{selectedCategory}
+                        span.categoryCount
+                    ul.postList
+                        -if(!hasPost)
+                            p 暂无博文
+                        -else
+                            -if(selectedCategory == '全部博文')
+                                -if(!hasPost)
+                                    p 暂无博文
+                                -else
+                                    -for(var i = 0;i< postDataLength; i++){
+                                        li.post
+                                            .postTitle
+                                                a.postTitleMain(href= hrefArr[i]) #{titleArr[i]}
+                                                .postOption
+                                                    span.postTime.postOption #{'(' + timeArr[i] + ')'}
+                                                    -if (guest == false)
+                                                        a.postEdit.tag(href='/'+username+'/edit/'+dateArr[i]+'/'+titleArr[i]) [编辑]
+                                                        a.postDelete.postEdit.tag(href='/'+username+'/deletepost/'+dateArr[i]+'/'+titleArr[i]) [删除]
+
+
+                                        hr
+                                    -}
+
+                            -else
+                                -if(!hasPostUnderThisCategory)
+                                    p 该分类下暂无博文
+                                -else
+                                    -for(var i = 0;i< postDataLength; i++){
+                                        li.post
+                                            .postTitle
+                                                a.postTitleMain(href= hrefArr[i]) #{titleArr[i]}
+                                                .postOption
+                                                    span.postTime.postOption #{'(' + timeArr[i] + ')'}
+                                                    -if (guest == false)
+                                                        a.postEdit.tag(href='/'+username+'/edit/'+dateArr[i]+'/'+titleArr[i]) [编辑]
+                                                        a.postDelete.postEdit.tag(href='/'+username+'/deletepost/'+dateArr[i]+'/'+titleArr[i]) [删除]
+
+
+                                        hr
+                                    -}
+        footer
+            p Copyright © 1996 - 2014 SINA Corporation, All Rights Reserved
+            p 新浪公司 版权所有
+        script(type = 'text/javascript', src='/javascripts/lib/require.js'  data-main='/javascripts/blog_list')

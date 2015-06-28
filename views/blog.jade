@@ -13,7 +13,7 @@ html(lang='zh-CN')
                     li
                         a(href='/'+ username + '/index') 首页
                     li
-                        a(href='/'+ username + '/blog_list') 博文目录
+                        a(href='/'+ username + '/blog_list/全部博文') 博文目录
                     li
                         a(href='') 图片
                     li
@@ -44,6 +44,10 @@ html(lang='zh-CN')
                                             each tag in tags
                                                 li
                                                     a.tag(href='') #{tag}
+
+                                        -if((tags === null)||((!(tags === null))&&(tags.length == 0))||(tags == false))
+                                            li
+                                                span.tagTitle 暂无标签
                                 li.categoryListLi
                                     span.tagTitle 分类:
                                     ul.categoryList
@@ -67,7 +71,7 @@ html(lang='zh-CN')
                                             li
                                                 a#editPost.bottomTag.tag(href='/'+username+'/edit/'+date+'/'+title) 编辑
                                             li
-                                                a#deletePost.bottomTag.tag(href='') 删除
+                                                a#deletePost.bottomTag.tag(href='/'+username+'/deletepost/'+date+'/'+title) 删除
                         hr
                     #commentList
                         .commentHeader
@@ -107,8 +111,14 @@ html(lang='zh-CN')
                             p <  前一篇
                             p 后一篇  >
                         li
-                            a.tag.otherPost(href='') 木卫二的生命迹象  亟待人类发射探测器
-                            a.tag.otherPost(href='') 番茄酱鳕鱼做法
+                            -if(previousPost == false)
+                                span.tag.otherPost 没有更多文章了
+                            -else
+                                a.tag.otherPost(href= previousPost.url) #{previousPost.title}
+                            -if(nextPost == false)
+                                span.tag.otherPost 没有更多文章了
+                            -else
+                                a.tag.otherPost(href= nextPost.url) #{nextPost.title}
         footer
             p Copyright © 1996 - 2014 SINA Corporation, All Rights Reserved
             p 新浪公司 版权所有

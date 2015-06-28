@@ -13,7 +13,7 @@ function Post(postData){
     this.category = postData.category;
 }
 
-Post.prototype.save = function(){
+Post.prototype.save = function(cb){
     var date = new Date();
 
     var post = {
@@ -48,30 +48,58 @@ Post.prototype.save = function(){
                 }
                 else{
 
-                    console.log('post.save : post 这边有点问题啊');
                     callback(null, result.insertId);
 
                 }
             });
         },
-        function(postid){
+        function(postid, callback){
             async.parallel(
                 {
 
                     category : function(subcb){
-                        category.postid = postid;
-                        var insertSQL = 'insert into CATEGORY_LIST SET ?';
-                        db.query(insertSQL, category, function(err, result){
-                            if (err){
-                                console.log(err);
-                                console.log('err happens in Post.save category');
-                            }
-                            else{
-                                console.log('post.save : category这边有点问题啊');
 
-                                subcb(null, result);
+                        async.waterfall([
+                            function(subsubcb){
+
+                                category.postid = postid;
+                                var insertSQL = 'insert into CATEGORY_LIST SET ?';
+                                db.query(insertSQL, category, function(err, result){
+                                    if (err){
+                                        console.log(err);
+                                        console.log('err happens in Post.save category');
+                                    }
+                                    else{
+
+                                        if(typeof(result.insertId) != 'undefined'){
+                                        subsubcb(null, true);}
+                                        else{
+                                            subsubcb(null, false);
+                                        }
+                                    }
+                                });
+                            },
+                            function(insertStauts, subsubcb) {
+
+                                if (insertStauts == true) {
+
+                                var deleteSQL = 'DELETE FROM CATEGORY_LIST WHERE postid IS NULL AND username = ? AND category = ?';
+                                db.query(deleteSQL, [category.username, category.category], function (err, result) {
+                                    if (err) {
+                                        console.log(err);
+                                        console.log('err happens in Post.save category');
+                                    }
+                                    else {
+
+                                        console.log('已经进入到category这步了');
+                                        subcb(null, postid);
+                                    }
+                                });
                             }
-                        });
+
+                            }
+                        ]);
+
                     },
 
 
@@ -89,14 +117,30 @@ Post.prototype.save = function(){
                                 console.log('err happens in Post.save tag');
                             }
                             else{
-                                console.log('post.save : tag 这边有点问题啊');
-                                subcb(null, result);
+
+                                callback(null, postid);
                             }
                         });
                     }
                 });
 
+                },
+        function(postid, callback){
+            var selectPostSQL = 'SELECT * FROM POST_LIST WHERE postid = ?';
+            db.query(selectPostSQL, postid,
+            function(err, results){
+                if(err){
+                    console.log(err);
+                    console.log(' Err happens in Post.save selectInsertedPost');
+                }else{
+                    if(results.length > 0){
+                        cb(results[0]);
+                    }else{
+                        cb(false);
+                    }
                 }
+            });
+        }
     ]);
 
 };
@@ -138,6 +182,7 @@ Post.prototype.update = function(){
 
                     category : function(subcb){
                         category.postid = postid;
+
                         var insertSQL = 'insert into CATEGORY_LIST SET ?';
                         db.query(insertSQL, category, function(err, result){
                             if (err){
@@ -222,7 +267,7 @@ Post.getAllPost = function(username, callback) {
                console.log('没有博文记录');
                callback(null, false);
            }else{
-               console.log(results);
+
                callback(null, results);
            }
        }
@@ -377,12 +422,60 @@ var sqlSet = [username, date, title];
 
 
                                         });
-                                    }
+                                    },
+
+                                        previousPost : function(subsubcb){
+
+                                            var selectPreviousPostSQL = 'SELECT  * FROM POST_LIST WHERE postid > ? AND username = ? ORDER BY postid DESC LIMIT 1';
+                                            //var selectPreviousPostSQL = 'SELECT  * FROM POST_LIST WEHRE postid > 57 ORDER BY postid DESC ';
+                                            db.query(selectPreviousPostSQL, [postid, username], function (err, results) {
+                                                if (err) {
+                                                    console.log(err+'err happens in Post.getOnePost.selectPreviousPost');
+                                                }
+
+                                                if(results.length == 0){
+                                                    console.log('tag not found');
+                                                    subsubcb(null, false);
+                                                }else{
+
+                                                    //console.log('this is the original tag: '+results);
+                                                    var previousURL = ('/'+results[0].username+'/'+results[0].date+'/'+results[0].title);
+                                                    console.log(previousURL);
+                                                    subsubcb(null, {url:previousURL, title:results[0].title });}
+
+
+                                            });
+                                        },
+                                        nextPost : function(subsubcb){
+                                            var selectNextPostSQL = 'SELECT  * FROM POST_LIST WHERE postid < ? AND username = ? LIMIT 1';
+                                            db.query(selectNextPostSQL, [postid,username], function (err, results) {
+                                                if (err) {
+                                                    console.log(err+'err happens in Post.getOnePost.selectPreviousPost');
+                                                }
+
+                                                if(results.length == 0){
+                                                    console.log('tag not found');
+                                                    subsubcb(null, false);
+                                                }else{
+                                                    //console.log('this is the original tag: '+results);
+                                                    var nextURL = ('/'+results[0].username+'/'+results[0].date+'/'+results[0].title);
+                                                    subsubcb(null, {url:nextURL, title:results[0].title });}
+
+
+                                            });
+                                        }
+
 
                                 },
                                 function(err, results){
 
-                                    subcb(null, {post : postResult, comments: results.comments, category : results.category, tag : results.tag});
+                                    subcb(null, {post : postResult,
+                                        comments: results.comments,
+                                        category : results.category,
+                                        tag : results.tag,
+                                        previousPost : results.previousPost,
+                                        nextPost : results.nextPost
+                                    });
                                 }
                                 );
 
@@ -451,6 +544,8 @@ Post.getAllCategory = function(username, callback){
         }else{
             finalResult = (results.hasPost != false)?(results.hasPost):(results.hasNoPost);
         }
+
+
 
         callback(null, finalResult);
 

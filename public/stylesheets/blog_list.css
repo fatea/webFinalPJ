@@ -170,13 +170,13 @@ ul.category li {
 
 }
 
-ul.category li:first-child {
+ul.category li.selectedCategory {
 	border: 1px solid rgba(0,0,0,0.1); 
   	border-radius: 3px;
   	background-image: linear-gradient(to right, #FBFBFD, #E9E9F1);
 }
 
-ul.category li:first-child a {
+ul.category li.selectedCategory a {
 	color: #2E5A7B;
 	font-weight: 700;
 }
@@ -185,9 +185,12 @@ div.searchMain {
 	margin-left: auto;
 	margin-right: auto;
 	margin-top: 15px;
-	margin-bottom: 50px;
+	/*margin-bottom: 50px;*/
 }
 
+#searchByUsername {
+    display: none;
+}
 
 
 input#searchInput {
@@ -207,9 +210,14 @@ input#searchSubmit {
 
 
 
-span.categoryCount,span.postTime,span.tagTitle {
+span.categoryCount,span.postTime,span.tagTitle,p.searchTag {
 	color: grey;
 	font-size: 12px;
+}
+
+span.searchScope {
+    color : #4D728F;
+    font-size: 12px;
 }
 
 div.right.midwrap {
@@ -234,9 +242,10 @@ li.post:first-child {
 	padding-top: 15px;
 }
 
+/*
 div.postTitle {
 	float: left;
-}
+}*/
 
 a.postTitleMain {
 	color: #4D728F;
@@ -255,7 +264,6 @@ div.postOption {
 span.tagTitle {
 	float: left;
 }
-
 
 
 footer {

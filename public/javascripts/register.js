@@ -90,6 +90,22 @@ require(['jquery', 'trim', 'check'], function($, Trim, Check){
 
 
     function validateForm() {
+        if (Check.regUsername(usernameInput.val()) == false) {
+            usernameAlert.show();
+            boolResult = false;
+        }
+        if ((Check.regPassword(passwordInput.val()) == false)||((repeatpwInput.val() == passwordInput.val()) == false)) {
+            passwordAlert.show();
+            boolResult = false;
+        }
+        if (Check.regName(nameInput.val()) == false) {
+            nameAlert.show();
+            boolResult = false;
+        }
+        if ((repeatpwInput.val() == passwordInput.val()) == false) {
+            repeatpwAlert.show();
+            boolResult = false;
+        }
         return boolResult;
     }
 

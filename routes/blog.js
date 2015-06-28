@@ -20,7 +20,8 @@ router.get('/', function(req, res, next) {
             var comments = results.postData.comments;
             var tag = results.postData.tag;
             var category = results.postData.category;
-
+            var previousPost = results.postData.previousPost;
+            var nextPost = results.postData.nextPost;
 
             var fullUrl =  req.protocol + '://' + req.get('host') + '/'+req.params.username+'/index';
 
@@ -29,6 +30,7 @@ router.get('/', function(req, res, next) {
                     next();
             }
             else{
+
 
 
 
@@ -59,7 +61,9 @@ router.get('/', function(req, res, next) {
                     date : post.date,
                     time : post.time,
                     pageview : post.pageview,
-                    imgsrc : '/images/avatars/'+req.params.username+'.gif'
+                    imgsrc : user.avatar,
+                    previousPost : previousPost,
+                    nextPost : nextPost
                 });
 
             }

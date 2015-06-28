@@ -13,7 +13,7 @@ html(lang='zh-CN')
                     li
                         a(href='index') 首页
                     li
-                        a(href='blog_list') 博文目录
+                        a(href='blog_list/全部博文') 博文目录
                     li
                         a(href='') 图片
                     li
@@ -41,11 +41,11 @@ html(lang='zh-CN')
                                     a.categoryTag.tag(href='postlist.html') 全部博文
                                     span.categoryCount #{'('+ categoryLength +')'}
 
-                                -for(var j = 0; j < category.length; j++){
-                                    li
-                                        a.categoryTag.tag(href='') #{category[j].category}
-                                        span.categoryCount #{'('+ category[j].total +')'}
-                                -}
+                            -for(var j = 0; j < category.length; j++){
+                                li
+                                    a.categoryTag.tag(href='') #{category[j].category}
+                                    span.categoryCount #{'('+ category[j].total +')'}
+                            -}
 
                 #postList.right.midwrap.container
                     .header

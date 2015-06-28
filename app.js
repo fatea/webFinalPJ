@@ -8,6 +8,7 @@ var SessionStore = require('express-mysql-session');
 var bodyParser = require('body-parser');
 var flash = require('connect-flash');
 var connection = require('./models/db');
+var multer  = require('multer');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -16,6 +17,12 @@ var register = require('./routes/register');
 var edit = require('./routes/edit');
 var profile = require('./routes/profile');
 var blog = require('./routes/blog');
+var blog_list = require('./routes/blog_list');
+var deletepost = require('./routes/deletepost');
+var deletecategory = require('./routes/deletecategory');
+var editcategory = require('./routes/editcategory');
+var search = require('./routes/search');
+
 
 var app = express();
 
@@ -29,6 +36,30 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+
+//app.use(multer({ dest: './public/images/avatars/'}));
+/*
+app.use(multer({ dest: './public/images/avatars/',
+    onFileUploadStart:function(file){
+
+        console.log("upload start");
+    },
+    //上传结束时触发
+    onFileUploadComplete:function(req, res){
+        console.log("upload complete");
+        //console.log(req.session.username);
+    },
+
+    rename : function(fieldname ,filename, req, res){
+
+        console.log('这里是params: '+req.body);
+        return fieldname+'testname';
+    }
+
+}));
+*/
+
 app.use(cookieParser());
 
 
@@ -50,6 +81,11 @@ app.use('/:username/edit/:date/:title', edit);
 app.use('/:username/profile', profile);
 app.use('/:username/:date/:title', blog);
 //app.use('/:username/:date/:title/like', blog);
+app.use('/:username/blog_list/:category', blog_list);
+app.use('/:username/deletepost/:date/:title', deletepost);
+app.use('/:username/deletecategory/:category', deletecategory);
+app.use('/:username/editcategory/:category', editcategory);
+app.use('/search', search);
 app.use('/login', login);
 app.use('/register', register);
 app.use('/users', users);

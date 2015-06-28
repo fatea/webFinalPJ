@@ -43,6 +43,15 @@ function($, Trim, Check){
     });
 
     function validateForm() {
+        if (Check.regUsername(usernameInput.val()) == false) {
+            usernameAlert.show();
+            boolResult = false;
+        }
+        if (Check.regPassword(passwordInput.val()) == false) {
+            passwordAlert.show();
+            boolResult = false;
+        }
+
         return boolResult;
     }
 

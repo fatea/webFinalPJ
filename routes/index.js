@@ -10,8 +10,10 @@ router.get('/', function(req, res, next) {
 
             function(err, results){
 
+
                 var userData = results.userData[0];
                 var postData = results.postData;
+
                 var categoryData = results.categoryData;
                 var tagData = results.tagData;
 
@@ -21,13 +23,14 @@ router.get('/', function(req, res, next) {
                 if(results.postData == false){
 
                     if(results.userData != false){
+                        console.log('头像地址是: '+userData.avatar);
                         res.render('index', {
                             hasPost : (typeof(postData)!='undefined'&&postData.length > 0),
                             mainTitle : userData.name+'的博客',
                             subTitle : fullUrl.toString(),
                             name : userData.name,
-
-                            imgsrc : '/images/avatars/'+'wjt.gif'
+                            category : categoryData,
+                            imgsrc : userData.avatar
                         });}
                     else{next();}
 
@@ -96,7 +99,7 @@ router.get('/', function(req, res, next) {
                         timeArr : timeArr,
                         hrefArr : hrefArr,
 
-                        imgsrc : '/images/avatars/'+req.params.username+'.gif'
+                        imgsrc : userData.avatar
                     });
 
 

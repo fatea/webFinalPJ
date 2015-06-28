@@ -425,6 +425,18 @@ a.tag.otherPost:last-child {
 	float: right;
 }
 
+span.tag.otherPost {
+    color: grey;
+    font-size: 13px;
+}
+span.tag.otherPost:first-child {
+    float: left;
+}
+
+span.tag.otherPost:last-child {
+    float: right;
+}
+
 
 
 

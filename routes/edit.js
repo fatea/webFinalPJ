@@ -50,7 +50,11 @@ router.get('/', function(req, res, next) {
                     else{
                         var post = results.postData.post;
                         var category = results.postData.category;
+                        if(results.postData.tag != false){
                         var tag = results.postData.tag.toString().replace(/,/g,' ');
+                        }else{
+                            tag = "";
+                        }
 
                         async.waterfall(
                             [
@@ -58,6 +62,7 @@ router.get('/', function(req, res, next) {
                                     Post.getAllCategory(user.username, callback);
                                 },
                                 function(categoryResult,callback){
+                                    console.log('the categoryResult : '+ categoryResult);
                                      actionURL = ('/'+req.params.username+'/edit/'+req.params.date+'/'+req.params.title);
                                     res.render('edit', {
                                         actionURL : actionURL,
@@ -103,15 +108,40 @@ router.post('/', function(req, res,next){
             };
             console.log(postData);
             var post = new Post(postData);
-            post.save();
-            res.redirect('/'+req.session.username+'/index');
+            post.save(function(returnedPost){
+                var returnedPostURL = '/'+returnedPost.username +'/' +returnedPost.date + '/'+returnedPost.title;
+                res.json({status : true, returnedPostURL : returnedPostURL });
+                res.end();
+            });
+
 
 
 
         }
+        else if(req.params.action == 'checktitle'){
+            var searchSameTitleUsername = req.body.username;
+            var searchSameTitleDate = req.body.date;
+            var searchSameTitleTitle = req.body.title;
+            var searchSameTitleSQL = 'SELECT * FROM POST_LIST WHERE username = ? AND date = ? AND title = ?';
+            db.query(searchSameTitleSQL, [searchSameTitleUsername, searchSameTitleDate, searchSameTitleTitle],
+            function(err, results){
+                if(err){
+                    console.log(err);
+                    console.log(' Err happens in routes/edit.js  post : checktitle');
+                }
+                else{
+                    if(results.length > 0){
+                        res.json({status:false});
+                        res.end();
+                    }else{
+                        res.json({status:true});
+                        res.end();
+                    }
+                }
+            });
+        }
         else if(req.params.action == 'newcategory') {
-            console.log(req.params);
-            console.log(req.body);
+
             var category_username = req.params.username;
             var category = req.body.category;
 
@@ -166,22 +196,45 @@ router.post('/', function(req, res,next){
                                         callback(null, results[0].postid);
                                     }
                                     else{
+                                        console.log('Problem: selectPost');
                                         callback(null, false);
                                     }
                                 }
                             }
                         );
                     },
-                    function(postid, callback) {
+                    function(postid, callback){
                         if(postid != false){
+                            var selectCategorySQL = 'SELECT * FROM CATEGORY_LIST WHERE postid = ?';
+                            db.query(selectCategorySQL, [postid],
+                            function(err, results){
+                                if(err){
+                                    console.log(err + ' Err happens in router:edit.js.editPost.selectCategory');
+                                }
+                                else{
+                                    if(results.length > 0){
+                                        callback(null, results[0]);
+                                    }
+                                    else{
+                                        console.log('Problem: selectCategory');
+                                        callback(null, false);
+                                    }
+                                }
+                            });
+                        }
+                    },
+                    function(selectedCategory, callback) {
+                        if(selectedCategory.postid != false){
+
+                        var postid = selectedCategory.postid;
 
                         var updatePostSQL = 'UPDATE POST_LIST SET ? WHERE postid = ' + postid + '';
                         var updateCategorySQL = 'UPDATE CATEGORY_LIST SET ? WHERE postid = ' + postid + '';
                         var deleteTagSQL = 'DELETE FROM TAG_LIST WHERE postid = ' + postid + '';
                         var insertTagSQL = 'INSERT INTO TAG_LIST (username, postid, tag) VALUES ?';
-                        //写到这里了
 
                         async.parallel({
+
                                 updatePost: function (subcb) {
                                     db.query(updatePostSQL, {
                                         title: updateData.title,
@@ -195,6 +248,7 @@ router.post('/', function(req, res,next){
                                                 subcb(null, true);
                                             }
                                             else {
+                                                //console.log('Problem: updatePost');
                                                 subcb(null, false);
                                             }
                                         }
@@ -202,6 +256,93 @@ router.post('/', function(req, res,next){
 
                                 },
                                 updateCategory: function (subcb) {
+                                    async.waterfall([
+                                        function(subsubcb){
+                                            db.query(updateCategorySQL, {category: updateData.category}, function (err, results) {
+                                                if (err) {
+                                                    console.log(err + ' Err happens in router:edit.js.editPost.updateCategory');
+                                                }
+
+                                                        //console.log('Problem: updateCategory');
+                                                        subsubcb(null, true);
+
+
+                                            });
+                                        },
+
+                                        function(updateStatus, subsubcb){
+                                            if (updateStatus == true) {
+
+                                                var deleteSQL = 'DELETE FROM CATEGORY_LIST WHERE postid IS NULL AND username = ? AND category = ?';
+                                                db.query(deleteSQL, [username, updateData.category], function (err, results) {
+                                                    if (err) {
+                                                        console.log(err);
+                                                        console.log('err happens in Post.save deleteCategory');
+                                                    }
+                                                    else {
+                                                        console.log('到了删除cateogory这步了');
+
+
+                                                            subsubcb(null, true);
+
+
+                                                    }
+                                                });
+                                            }
+                                        },
+                                        function(deleteStatus, subsubcb){
+
+                                            if(deleteStatus == true){
+                                                var selectCategorySQL = 'SELECT * FROM CATEGORY_LIST WHERE username = ? AND category = ?';
+                                                //console.log('selectedPost.category : '+selectedCategory.category);
+                                                db.query(selectCategorySQL, [username, selectedCategory.category], function (err, results) {
+                                                    if (err) {
+                                                        console.log(err);
+                                                        console.log('err happens in Post.save selectCategory');
+                                                    }
+                                                    else {
+                                                        //写到这里了
+                                                        if(results.length > 0){
+                                                            console.log('还有这个分类呢');
+                                                            subsubcb(null, true);
+                                                        }else{
+                                                            console.log('没有这个分类了');
+                                                            subsubcb(null, false);
+                                                        }
+
+
+
+
+                                                    }
+                                                });
+                                            }
+                                        },
+                                        function(selectStatus, subsubcb){
+
+                                            if(selectStatus == false){
+                                                var insertCategorySQL = 'INSERT INTO CATEGORY_LIST SET ?';
+                                                db.query(insertCategorySQL, {username:username, category:selectedCategory.category}, function (err, results) {
+                                                    if (err) {
+                                                        console.log(err);
+                                                        console.log('err happens in Post.save deleteCategory');
+                                                    }
+                                                    else {
+                                                        //写到这里了
+                                                        if(typeof(results.insertId)=='undefined'){
+                                                            subcb(null, false);
+                                                        }
+                                                        else{
+                                                            console.log('到为分类博文这一步了');
+                                                            subcb(null, true);
+                                                        }
+                                                    }
+                                                });
+                                            }else{
+                                                subcb(null, true);
+                                            }
+                                        }
+                                    ]);
+                                    /*
                                     db.query(updateCategorySQL, {category: updateData.category}, function (err, results) {
                                         if (err) {
                                             console.log(err + ' Err happens in router:edit.js.editPost.updateCategory');
@@ -214,7 +355,7 @@ router.post('/', function(req, res,next){
                                                 subcb(null, false);
                                             }
                                         }
-                                    });
+                                    });*/
                                 },
                                 deleteAndInsertTag: function (subcb) {
                                     async.waterfall([
@@ -224,6 +365,7 @@ router.post('/', function(req, res,next){
                                                     console.log(err + ' Err happens in router:edit.js.editPost.deleteTag');
                                                 }
                                                 else {
+
                                                     subsubcb(null, true);
                                                     /*
                                                      if (results.affectedRows > 0) {
@@ -239,26 +381,31 @@ router.post('/', function(req, res,next){
                                         },
                                         function (deleteSuccess, subsubcb) {
                                             if (deleteSuccess) {
-                                                var tagArr = [];
-                                                for (var i = 0; i < updateData.tag.length; i++) {
-                                                    tagArr[i] = [username, postid, updateData.tag[i]];
-                                                }
+                                                if(updateData.tag[0]!= ""){
+                                                    var tagArr = [];
+                                                    for (var i = 0; i < updateData.tag.length; i++) {
+                                                        tagArr[i] = [username, postid, updateData.tag[i]];
+                                                    }
 
-                                                db.query(insertTagSQL, [tagArr],
-                                                    function (err, results) {
-                                                        if (err) {
-                                                            console.log(err + ' Err happens in router:edit.js.editPost.insertTag');
-                                                        }
-                                                        else {
-                                                            if (results.affectedRows > 0) {
-                                                                subsubcb(null, true);
+                                                    db.query(insertTagSQL, [tagArr],
+                                                        function (err, results) {
+                                                            if (err) {
+                                                                console.log(err + ' Err happens in router:edit.js.editPost.insertTag');
                                                             }
                                                             else {
-                                                                console.log('重新新增Tag出现问题');
-                                                                subsubcb(null, false);
+                                                                if (results.affectedRows > 0) {
+                                                                    subsubcb(null, true);
+                                                                }
+                                                                else {
+                                                                    console.log('重新新增Tag出现问题');
+                                                                    subsubcb(null, false);
+                                                                }
                                                             }
-                                                        }
-                                                    });
+                                                        });
+                                                }else{
+                                                    subsubcb(null, true);
+                                                }
+
 
                                             } else {
                                                 subsubcb(null, false);

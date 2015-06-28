@@ -18,11 +18,18 @@ html(lang='zh-CN')
                                 li
                                     span 分类:
                                     select#categorySelect(name='categorySelect')
-                                        -for(var i = 0; i < categoryArr.length; i++)
-                                            -if(categoryArr[i].category != presentCategory)
-                                                option(value= categoryArr[i].category ) #{categoryArr[i].category}
-                                            -else
-                                                option(value= categoryArr[i].category , selected = 'selected') #{categoryArr[i].category}
+                                        -if(presentCategory == false)
+                                            -for(var i = 0; i < categoryArr.length; i++)
+                                                    -if(categoryArr[i].category == '未分类博文')
+                                                        option(value= categoryArr[i].category , selected = 'selected') #{categoryArr[i].category}
+                                                    -else
+                                                        option(value= categoryArr[i].category ) #{categoryArr[i].category}
+                                        -else
+                                            -for(var i = 0; i < categoryArr.length; i++)
+                                                -if(categoryArr[i].category == presentCategory)
+                                                    option(value= categoryArr[i].category , selected = 'selected') #{categoryArr[i].category}
+                                                -else
+                                                    option(value= categoryArr[i].category ) #{categoryArr[i].category}
                                     a#newCategory.tag.newCategory(href='') 创建分类
                                 li
                                     span 标签:

@@ -16,6 +16,33 @@ require(['jquery', 'trim', 'check'], function($, Trim, Check) {
     var title = urlArr[5];
 
 
+
+
+    $('#deletePost').click(function(){
+        var url = $(this).attr('href');
+        var confirmResult =  confirm('确定要删除该博文吗?');
+        if(confirmResult == true){
+            $.ajax({
+                url : url,
+                cache:false,
+                type : 'POST',
+                success : function(data, status){
+
+                    if(data.status == true){
+                        alert('删除成功!');
+                        window.location= ('/'+username+'/index');
+                    }else{
+                        alert('删除失败!');
+                        window.location.reload();
+                    }
+
+
+                }
+            });
+        }
+        return false;
+    });
+
     //点赞和取消点赞
     $('#likeTag').click(function () {
         //alert($(location).attr('href').split('/'));

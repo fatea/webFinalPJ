@@ -1,0 +1,27 @@
+doctype html
+html(lang='zh-CN')
+    head
+        meta(charset='UTF-8')
+        title 博文目录
+        link(href='/stylesheets/blog_list.css', rel='stylesheet', type='text/css')
+    body
+        #wrapper
+            #midwrap
+                #postList.right.midwrap.container
+                    #postListHeader.header
+                        p.title 搜索结果
+                    ul.postList
+                        -if(!hasPost)
+                            p 未查到相关博文
+                        -else
+                            -for(var i = 0;i< postDataLength; i++){
+                                li.post
+                                    .postTitle
+                                        a.postTitleMain(href= hrefArr[i]) #{titleArr[i]}
+                                        .postOption
+                                            span.postTime.postOption #{'(' + timeArr[i] + ')'}
+                                hr
+                            -}
+        footer
+            p Copyright © 1996 - 2014 SINA Corporation, All Rights Reserved
+            p 新浪公司 版权所有
