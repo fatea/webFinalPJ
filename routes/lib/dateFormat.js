@@ -1,6 +1,6 @@
 
 function getDate(date){
-    var dateStr = ''+date.getFullYear()+'-'+date.getMonth()+'-'+date.getDate();
+    var dateStr = ''+date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
     return dateStr;
 }
 

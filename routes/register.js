@@ -4,7 +4,7 @@ User = require('../models/user');
 var router = express.Router();
 
 router.get('/', function(req, res){
-    if(req.session.username != 'undefined'){
+    if(typeof(req.session.username) != 'undefined'){
         res.redirect('/'+req.session.username+'/index');
     }else{
     res.render('register',{error : req.flash('error').toString()});}

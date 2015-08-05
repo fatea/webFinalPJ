@@ -1,0 +1,59 @@
+doctype html
+html(lang='zh-CN')
+    head
+        meta(charset='UTF-8')
+        title 博文目录
+        link(href='/stylesheets/blog_list.css', rel='stylesheet', type='text/css')
+    body
+        #wrapper
+            #midwrap
+                #postList.right.midwrap.container
+                    #postListHeader.header
+                        p.title 热门首页
+                    ul.postList
+                        -if(hotUser!=false)
+                            li.post
+                                .postTitle
+                                    a.postTitleMain(href= '/'+hotUser.username+'/index') #{'热门用户: '+hotUser.username}
+                                    .postOption
+                                        span.postTime.postOption #{' 总浏览量 (' + hotUser.totalPageView + ')'}
+                            hr
+                        -else
+                            li.post
+                                .postTitle
+                                    a.postTitleMain(href= '/trend') 暂无热门用户
+                                    .postOption
+                                        span.postTime.postOption 暂无数据
+                            hr
+                        -if(hotPost!=false)
+                            li.post
+                                .postTitle
+                                    a.postTitleMain(href= '/' + hotPost.username + '/'+hotPost.date+'/'+hotPost.title) #{'热门博文: '+hotPost.title}
+                                    .postOption
+                                        span.postTime.postOption #{' 浏览量 (' + hotPost.pageview + ')'}
+                            hr
+                        -else
+                            li.post
+                                .postTitle
+                                    a.postTitleMain(href= '/trend') 暂无热门博文
+                                    .postOption
+                                        span.postTime.postOption 暂无数据
+                            hr
+                        -if(newestPost!=false)
+                            li.post
+                                .postTitle
+                                    a.postTitleMain(href= '/' + newestPost.username + '/'+newestPost.date+'/'+newestPost.title) #{'最新博文: '+newestPost.title}
+                                    .postOption
+                                        span.postTime.postOption #{' 发表时间 (' + newestPost.time + ')'}
+                            hr
+                        -else
+                            li.post
+                                .postTitle
+                                    a.postTitleMain(href= '/trend') 暂无最新博文
+                                    .postOption
+                                        span.postTime.postOption 暂无数据
+                            hr
+
+        footer
+            p Copyright © 1996 - 2014 SINA Corporation, All Rights Reserved
+            p 新浪公司 版权所有

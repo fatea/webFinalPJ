@@ -23,6 +23,7 @@ var deletecategory = require('./routes/deletecategory');
 var editcategory = require('./routes/editcategory');
 var search = require('./routes/search');
 
+var trend = require('./routes/trend');
 
 var app = express();
 
@@ -89,6 +90,8 @@ app.use('/search', search);
 app.use('/login', login);
 app.use('/register', register);
 app.use('/users', users);
+
+app.use('/trend', trend);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
